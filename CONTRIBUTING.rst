@@ -1,16 +1,16 @@
 Contributing to django-taggit
 =============================
 
-.. image:: https://jazzband.co/static/img/jazzband.svg
-   :target: https://jazzband.co/
-   :alt: Jazzband
+.. .. image:: https://jazzband.co/static/img/jazzband.svg
+..    :target: https://jazzband.co/
+..    :alt: Jazzband
 
-This is a `Jazzband <https://jazzband.co>`_ project. By contributing you agree
-to abide by the `Contributor Code of Conduct
+This project is a clone of  `Jazzband <https://github.com/jazzband/django-taggit>`_ project.
+By contributing you agree to abide by the `Contributor Code of Conduct
 <https://jazzband.co/about/conduct>`_ and follow the `guidelines
 <https://jazzband.co/about/guidelines>`_.
 
-Thank you for taking the time to contribute to django-taggit.
+Thank you for taking the time to contribute to django-tag-fields.
 
 Follow these guidelines to speed up the process.
 
@@ -19,8 +19,8 @@ Reach out before you start
 
 Before opening a new issue, look if somebody else has already started working
 on the same issue in the `GitHub issues
-<https://github.com/jazzband/django-taggit/issues>`_ and `pull requests
-<https://github.com/jazzband/django-taggit/pulls>`_.
+<https://github.com/imAsparky/django-tag-fields/issues>`_ and `pull requests
+<https://github.com/imAsparky/django-tag-fields/pulls>`_.
 
 Fork the repository
 -------------------
@@ -30,14 +30,14 @@ own fork in your development environment:
 
 .. code-block:: console
 
-    git clone git@github.com:<your_fork>/django-taggit.git
-    cd django-taggit
+    git clone git@github.com:<your_fork>/django-tag-fields.git
+    cd django-tag-fields
     python setup.py develop
 
 Running tests
 -------------
 
-django-taggit uses `tox <https://tox.readthedocs.io/>`_ to run tests:
+django-tag-fields uses `tox <https://tox.readthedocs.io/>`_ to run tests:
 
 .. code-block:: console
 
@@ -79,7 +79,7 @@ Send pull request
 -----------------
 
 It is now time to push your changes to GitHub and open a `pull request
-<https://github.com/jazzband/django-taggit/pulls>`_!
+<https://github.com/imAsparky/django-tag-fields/pulls>`_!
 
 
 Release Checklist
@@ -89,8 +89,8 @@ These steps need to happen by a release maintainer.
 
 To make a release, the following needs to happen:
 
-- Bump the version number in ``taggit/__init__.py``
+- Bump the version number in ``tag_fields/__init__.py``
 - Update the changelog (making sure to add the (Unreleased) section to the top)
-- Get those changes onto the ``master`` branch
+- Get those changes onto the ``main`` branch
 - Tag the commit with the version number
-- CI should then upload a release to be verified through Jazzband
+- CI should then upload a release to be verified by imAsparky
