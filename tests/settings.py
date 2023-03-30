@@ -7,7 +7,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "taggit",
+    "tag_fields",
     "tests",
 ]
 

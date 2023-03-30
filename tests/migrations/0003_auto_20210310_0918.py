@@ -3,13 +3,13 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import taggit.managers
+import tag_fields.managers
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("taggit", "0003_taggeditem_add_unique_index"),
+        ("tag_fields", "0003_taggeditem_add_unique_index"),
         ("contenttypes", "0002_remove_content_type_name"),
         ("tests", "0002_auto_20200214_1129"),
     ]
@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="tests_multiinheritancelazyresolutionfoodtag_items",
-                        to="taggit.tag",
+                        to="tag_fields.tag",
                     ),
                 ),
                 (
@@ -83,10 +83,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="multiinheritancefood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.MultiInheritanceLazyResolutionFoodTag",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),

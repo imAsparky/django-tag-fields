@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-import taggit.managers
+import tag_fields.managers
 
 
 class Migration(migrations.Migration):
@@ -26,10 +26,10 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "tags",
-                    taggit.managers.TaggableManager(
+                    tag_fields.managers.TaggableManager(
                         help_text="A comma-separated list of tags.",
-                        through="taggit.TaggedItem",
-                        to="taggit.Tag",
+                        through="tag_fields.TaggedItem",
+                        to="tag_fields.Tag",
                         verbose_name="Tags",
                     ),
                 ),

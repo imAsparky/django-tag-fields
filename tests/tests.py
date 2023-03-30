@@ -9,10 +9,10 @@ from django.db import IntegrityError, connection, models
 from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
-from taggit.managers import TaggableManager, _TaggableManager
-from taggit.models import Tag, TaggedItem
-from taggit.utils import edit_string_for_tags, parse_tags
-from taggit.views import tagged_object_list
+from tag_fields.managers import TaggableManager, _TaggableManager
+from tag_fields.models import Tag, TaggedItem
+from tag_fields.utils import edit_string_for_tags, parse_tags
+from tag_fields.views import tagged_object_list
 
 from .forms import (
     BlankTagForm,
@@ -92,7 +92,7 @@ class TagModelTestCase(BaseTaggingTestCase):
         apple.tags.add(yummy)
 
     def test_slugify(self):
-        a = Article.objects.create(title="django-taggit 1.0 Released")
+        a = Article.objects.create(title="django-tag_fields 1.0 Released")
         a.tags.add("awesome", "release", "AWESOME")
         self.assert_tags_equal(
             a.tags.all(),
@@ -482,37 +482,37 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         # Prefill content type cache:
         ContentType.objects.get_for_model(self.food_model)
         apple = self.food_model.objects.create(name="apple")
-        # 1. SELECT "taggit_tag"."id", "taggit_tag"."name", "taggit_tag"."slug" FROM "taggit_tag" WHERE "taggit_tag"."name" IN ('green', 'red', 'delicious')
-        # 2. SELECT "taggit_tag"."id", "taggit_tag"."name", "taggit_tag"."slug" FROM "taggit_tag" WHERE "taggit_tag"."name" = 'green'
+        # 1. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" IN ('green', 'red', 'delicious')
+        # 2. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'green'
         # 3. SAVEPOINT
         # 4. SAVEPOINT
-        # 5. INSERT INTO "taggit_tag" ("name", "slug") VALUES ('green', 'green')
+        # 5. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('green', 'green')
         # 6. RELEASE SAVEPOINT
         # 7. RELEASE SAVEPOINT
-        # 8. SELECT "taggit_tag"."id", "taggit_tag"."name", "taggit_tag"."slug" FROM "taggit_tag" WHERE "taggit_tag"."name" = 'red'
+        # 8. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'red'
         # 9. SAVEPOINT
         # 10. SAVEPOINT
-        # 11. INSERT INTO "taggit_tag" ("name", "slug") VALUES ('red', 'red')
+        # 11. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('red', 'red')
         # 12. RELEASE SAVEPOINT
         # 13. RELEASE SAVEPOINT
-        # 14. SELECT "taggit_tag"."id", "taggit_tag"."name", "taggit_tag"."slug" FROM "taggit_tag" WHERE "taggit_tag"."name" = 'delicious'
+        # 14. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'delicious'
         # 15. SAVEPOINT
         # 16. SAVEPOINT
-        # 17. INSERT INTO "taggit_tag" ("name", "slug") VALUES ('delicious', 'delicious')
+        # 17. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('delicious', 'delicious')
         # 18. RELEASE SAVEPOINT
         # 19. RELEASE SAVEPOINT
-        # 20. SELECT "taggit_taggeditem"."tag_id" FROM "taggit_taggeditem" WHERE ("taggit_taggeditem"."content_type_id" = 20 AND "taggit_taggeditem"."object_id" = 1)
-        # 21. SELECT "taggit_taggeditem"."id", "taggit_taggeditem"."tag_id", "taggit_taggeditem"."content_type_id", "taggit_taggeditem"."object_id" FROM "taggit_taggeditem" WHERE ("taggit_taggeditem"."content_type_id" = 20 AND "taggit_taggeditem"."object_id" = 1 AND "taggit_taggeditem"."tag_id" = 1)
+        # 20. SELECT "tag_fields_taggeditem"."tag_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1)
+        # 21. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 1)
         # 22. SAVEPOINT
-        # 23. INSERT INTO "taggit_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (1, 20, 1)
+        # 23. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (1, 20, 1)
         # 24. RELEASE SAVEPOINT
-        # 25. SELECT "taggit_taggeditem"."id", "taggit_taggeditem"."tag_id", "taggit_taggeditem"."content_type_id", "taggit_taggeditem"."object_id" FROM "taggit_taggeditem" WHERE ("taggit_taggeditem"."content_type_id" = 20 AND "taggit_taggeditem"."object_id" = 1 AND "taggit_taggeditem"."tag_id" = 2)
+        # 25. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 2)
         # 26. SAVEPOINT
-        # 27. INSERT INTO "taggit_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (2, 20, 1)
+        # 27. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (2, 20, 1)
         # 28. RELEASE SAVEPOINT
-        # 29. SELECT "taggit_taggeditem"."id", "taggit_taggeditem"."tag_id", "taggit_taggeditem"."content_type_id", "taggit_taggeditem"."object_id" FROM "taggit_taggeditem" WHERE ("taggit_taggeditem"."content_type_id" = 20 AND "taggit_taggeditem"."object_id" = 1 AND "taggit_taggeditem"."tag_id" = 3)
+        # 29. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 3)
         # 30. SAVEPOINT
-        # 31. INSERT INTO "taggit_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (3, 20, 1)
+        # 31. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (3, 20, 1)
         # 32. RELEASE SAVEPOINT
         queries = 32
         self.assertNumQueries(queries, apple.tags.add, "red", "delicious", "green")
@@ -1283,5 +1283,7 @@ class OrderedTagsTest(TestCase):
 class PendingMigrationsTests(TestCase):
     def test_taggit_has_no_pending_migrations(self):
         out = StringIO()
-        call_command("makemigrations", "taggit", dry_run=True, stdout=out)
-        self.assertEqual(out.getvalue().strip(), "No changes detected in app 'taggit'")
+        call_command("makemigrations", "tag_fields", dry_run=True, stdout=out)
+        self.assertEqual(
+            out.getvalue().strip(), "No changes detected in app 'tag_fields'"
+        )
