@@ -1,10 +1,14 @@
-Welcome to django-taggit's documentation!
-=========================================
+Welcome to django-tag-fields's documentation!
+=============================================
 
-``django-taggit`` is a reusable Django application designed to make adding
+``django-tag-fields`` is a reusable Django application designed to make adding
 tagging to your project easy and fun.
 
-``django-taggit`` works with Django 2.2+ and Python 3.6+.
+This has been hard cloned from django-taggit, and continus to work as
+django-taggit==3.1.0
+
+
+``django-tag-fields`` works with Django 2.2+ and Python 3.6+.
 
 .. toctree::
    :maxdepth: 2

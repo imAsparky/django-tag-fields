@@ -1,20 +1,20 @@
-Customizing taggit
-==================
+Customizing tag-fields
+======================
 
 Using a Custom Tag or Through Model
 -----------------------------------
-By default ``django-taggit`` uses a "through model" with a
+By default ``django-tag-fields`` uses a "through model" with a
 ``GenericForeignKey`` on it, that has another ``ForeignKey`` to an included
 ``Tag`` model.  However, there are some cases where this isn't desirable, for
 example if you want the speed and referential guarantees of a real
 ``ForeignKey``, if you have a model with a non-integer primary key, or if you
 want to store additional data about a tag, such as whether it is official.  In
-these cases ``django-taggit`` makes it easy to substitute your own through
+these cases ``django-tag-fields`` makes it easy to substitute your own through
 model, or ``Tag`` model.
 
-Note: Including 'taggit' in ``settings.py`` INSTALLED_APPS list will create the
-default ``django-taggit`` and "through model" models. If you would like to use
-your own models, you will need to remove 'taggit' from ``settings.py``'s
+Note: Including 'tag-fields' in ``settings.py`` INSTALLED_APPS list will create the
+default ``django-tag-fields`` and "through model" models. If you would like to use
+your own models, you will need to remove `tag_fields` from ``settings.py``'s
 INSTALLED_APPS list.
 
 To change the behavior there are a number of classes you can subclass to obtain
@@ -34,7 +34,7 @@ Custom ForeignKeys
 ~~~~~~~~~~~~~~~~~~
 
 Your intermediary model must be a subclass of
-``taggit.models.TaggedItemBase`` with a foreign key to your content
+``tag_fields.models.TaggedItemBase`` with a foreign key to your content
 model named ``content_object``. Pass this intermediary model as the
 ``through`` argument to ``TaggableManager``:
 
@@ -42,8 +42,8 @@ model named ``content_object``. Pass this intermediary model as the
 
     from django.db import models
 
-    from taggit.managers import TaggableManager
-    from taggit.models import TaggedItemBase
+    from tag_fields.managers import TaggableManager
+    from tag_fields.models import TaggedItemBase
 
 
     class TaggedFood(TaggedItemBase):
@@ -60,9 +60,9 @@ Once this is done, the API works the same as for GFK-tagged models.
 Custom GenericForeignKeys
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The default ``GenericForeignKey`` used by ``django-taggit`` assume your
+The default ``GenericForeignKey`` used by ``django-tag-fields`` assume your
 tagged object use an integer primary key. For non-integer primary key,
-your intermediary model must be a subclass of ``taggit.models.CommonGenericTaggedItemBase``
+your intermediary model must be a subclass of ``tag_fields.models.CommonGenericTaggedItemBase``
 with a field named ``"object_id"`` of the type of your primary key.
 
 For example, if your primary key is a string:
@@ -71,8 +71,8 @@ For example, if your primary key is a string:
 
     from django.db import models
 
-    from taggit.managers import TaggableManager
-    from taggit.models import CommonGenericTaggedItemBase, TaggedItemBase
+    from tag_fields.managers import TaggableManager
+    from tag_fields.models import CommonGenericTaggedItemBase, TaggedItemBase
 
     class GenericStringTaggedItem(CommonGenericTaggedItemBase, TaggedItemBase):
         object_id = models.CharField(max_length=50, verbose_name=_('Object id'), db_index=True)
@@ -87,7 +87,7 @@ GenericUUIDTaggedItemBase
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A common use case of a non-integer primary key, is UUID primary key.
-``django-taggit`` provides a base class ``GenericUUIDTaggedItemBase`` ready
+``django-tag-fields`` provides a base class ``GenericUUIDTaggedItemBase`` ready
 to use with models using an UUID primary key:
 
   .. code-block:: python
@@ -95,8 +95,8 @@ to use with models using an UUID primary key:
     from django.db import models
     from django.utils.translation import gettext_lazy as _
 
-    from taggit.managers import TaggableManager
-    from taggit.models import GenericUUIDTaggedItemBase, TaggedItemBase
+    from tag_fields.managers import TaggableManager
+    from tag_fields.models import GenericUUIDTaggedItemBase, TaggedItemBase
 
     class UUIDTaggedItem(GenericUUIDTaggedItemBase, TaggedItemBase):
         # If you only inherit GenericUUIDTaggedItemBase, you need to define
@@ -124,8 +124,8 @@ model named ``"tag"``. If your custom ``Tag`` model has extra parameters you wan
     from django.db import models
     from django.utils.translation import gettext_lazy as _
 
-    from taggit.managers import TaggableManager
-    from taggit.models import TagBase, GenericTaggedItemBase
+    from tag_fields.managers import TaggableManager
+    from tag_fields.models import TagBase, GenericTaggedItemBase
 
 
     class MyCustomTag(TagBase):
@@ -168,7 +168,7 @@ model named ``"tag"``. If your custom ``Tag`` model has extra parameters you wan
 
     .. method:: slugify(tag, i=None)
 
-        By default ``taggit`` uses :func:`django.utils.text.slugify` to
+        By default ``tag-fields`` uses :func:`django.utils.text.slugify` to
         calculate a slug for a given tag. However, if you want to implement
         your own logic you can override this method, which receives the ``tag``
         (a string), and ``i``, which is either ``None`` or an integer, which
@@ -180,7 +180,7 @@ model named ``"tag"``. If your custom ``Tag`` model has extra parameters you wan
 Using a custom tag string parser
 --------------------------------
 
-By default ``django-taggit`` uses ``taggit.utils._parse_tags`` which accepts a
+By default ``django-tag-fields`` uses ``tag_fields.utils._parse_tags`` which accepts a
 string which may contain one or more tags and returns a list of tag names. This
 parser is quite intelligent and can handle a number of edge cases; however, you
 may wish to provide your own parser for various reasons (e.g. you can do some
@@ -195,12 +195,12 @@ function to split on comma and convert to lowercase:
     def comma_splitter(tag_string):
         return [t.strip().lower() for t in tag_string.split(',') if t.strip()]
 
-You need to tell ``taggit`` to use this function instead of the default by
+You need to tell ``tag_fields`` to use this function instead of the default by
 adding a new setting, ``TAGGIT_TAGS_FROM_STRING`` and providing it with the
 dotted path to your function. Likewise, you can provide a function to convert a
 list of tags to a string representation and use the setting
 ``TAGGIT_STRING_FROM_TAGS`` to override the default value (which is
-``taggit.utils._edit_string_for_tags``):
+``tag_fields.utils._edit_string_for_tags``):
 
   .. code-block:: python
 
