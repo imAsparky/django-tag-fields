@@ -4,6 +4,15 @@ Changelog
 (Unreleased)
 ~~~~~~~~~~~~
 
+4.0.0 (2023-03-30)
+~~~~~~~~~~~~~~~~~~
+* Initial release of django-tag-fields.
+* A renaming of cloned `django-taggit`
+
+This release functions the same as `django-taggit v3.1.0`.  The changes here are simply
+getting the project to be `django-tag-fields`, with all the necessary downstream changes
+of renaming.
+
 3.1.0 (2022-11-08)
 ~~~~~~~~~~~~~~~~~~
 
