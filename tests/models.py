@@ -2,8 +2,8 @@ import uuid
 
 from django.db import models
 
-from taggit.managers import TaggableManager
-from taggit.models import (
+from tag_fields.managers import TaggableManager
+from tag_fields.models import (
     CommonGenericTaggedItemBase,
     GenericTaggedItemBase,
     GenericUUIDTaggedItemBase,

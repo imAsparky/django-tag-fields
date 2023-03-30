@@ -3,14 +3,14 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import taggit.managers
+import tag_fields.managers
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ("contenttypes", "0002_remove_content_type_name"),
-        ("taggit", "0003_taggeditem_add_unique_index"),
+        ("tag_fields", "0003_taggeditem_add_unique_index"),
         ("tests", "0003_auto_20210310_0918"),
     ]
 
@@ -114,10 +114,10 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "tags",
-                    taggit.managers.TaggableManager(
+                    tag_fields.managers.TaggableManager(
                         help_text="A comma-separated list of tags.",
-                        through="taggit.TaggedItem",
-                        to="taggit.Tag",
+                        through="tag_fields.TaggedItem",
+                        to="tag_fields.Tag",
                         verbose_name="Tags",
                     ),
                 ),

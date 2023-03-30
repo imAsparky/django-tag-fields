@@ -3,7 +3,7 @@ import uuid
 import django.db.models.deletion
 from django.db import migrations, models
 
-import taggit.managers
+import tag_fields.managers
 
 
 class Migration(migrations.Migration):
@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("taggit", "0003_taggeditem_add_unique_index"),
+        ("tag_fields", "0003_taggeditem_add_unique_index"),
         ("contenttypes", "0002_remove_content_type_name"),
     ]
 
@@ -687,13 +687,13 @@ class Migration(migrations.Migration):
             name="ArticleTag",
             fields=[],
             options={"proxy": True, "indexes": []},
-            bases=("taggit.tag",),
+            bases=("tag_fields.tag",),
         ),
         migrations.CreateModel(
             name="ArticleTaggedItem",
             fields=[],
             options={"proxy": True, "indexes": []},
-            bases=("taggit.taggeditem",),
+            bases=("tag_fields.taggeditem",),
         ),
         migrations.CreateModel(
             name="Child",
@@ -823,7 +823,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="uuidfood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.UUIDTaggedItem",
                 to="tests.UUIDTag",
@@ -836,7 +836,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tagged_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -845,7 +845,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_through2_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -854,7 +854,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_through1_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -870,7 +870,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_taggedpet_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -879,7 +879,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_taggedfood_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -921,7 +921,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_taggedcustompkpet_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -930,7 +930,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_taggedcustompkfood_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
@@ -939,43 +939,43 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="tests_taggedcustompk_items",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
             ),
         ),
         migrations.AddField(
             model_name="photo",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="pet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="parent",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="officialpet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.OfficialThroughModel",
                 to="tests.OfficialTag",
@@ -985,7 +985,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="officialfood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.OfficialThroughModel",
                 to="tests.OfficialTag",
@@ -995,102 +995,102 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="name",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 related_name="a_unique_related_name",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="multipletagsgfk",
             name="tags1",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 related_name="tagsgfk1",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="multipletagsgfk",
             name="tags2",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 related_name="tagsgfk2",
                 through="tests.ThroughGFK",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="multipletags",
             name="tags1",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 related_name="tags1",
                 through="tests.Through1",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="multipletags",
             name="tags2",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 related_name="tags2",
                 through="tests.Through2",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="movie",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="food",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="directpet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedPet",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="directfood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedFood",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="directtrackedpet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedTrackedPet",
                 to="tests.TrackedTag",
@@ -1100,7 +1100,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="directtrackedfood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedTrackedFood",
                 to="tests.TrackedTag",
@@ -1110,60 +1110,60 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="directcustompkpet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedCustomPKPet",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="directcustompkfood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedCustomPKFood",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="custompkpet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedCustomPK",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="custompkfood",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.TaggedCustomPK",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="custommanager",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
         migrations.AddField(
             model_name="article",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.ArticleTaggedItem",
-                to="taggit.Tag",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),

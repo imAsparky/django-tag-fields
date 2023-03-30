@@ -4,7 +4,7 @@ import os.path
 from django.test import TestCase
 from django.utils import translation
 
-from taggit.utils import split_strip
+from tag_fields.utils import split_strip
 
 
 class SplitStripTests(TestCase):
@@ -25,7 +25,7 @@ class TestLanguages(TestCase):
     maxDiff = None
 
     def get_locale_dir(self):
-        return os.path.join(os.path.dirname(__file__), "..", "taggit", "locale")
+        return os.path.join(os.path.dirname(__file__), "..", "tag_fields", "locale")
 
     def test_language_file_integrity(self):
         locale_dir = self.get_locale_dir()

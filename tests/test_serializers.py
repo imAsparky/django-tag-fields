@@ -1,14 +1,14 @@
 """
-test_django-taggit-serializer
+test_django-tag_fields-serializer
 ------------
 
-Tests for `django-taggit-serializer` models module.
+Tests for `django-tag_fields-serializer` models module.
 """
 
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
-from taggit import serializers
+from tag_fields import serializers
 
 from .models import TestModel
 from .serializers import TestModelSerializer

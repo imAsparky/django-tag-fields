@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 
-from taggit.views import TagListMixin
+from tag_fields.views import TagListMixin
 
 from .models import Food
 

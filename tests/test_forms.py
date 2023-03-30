@@ -2,8 +2,8 @@ from django import forms
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from taggit.forms import TagField
-from taggit.models import Tag
+from tag_fields.forms import TagField
+from tag_fields.models import Tag
 
 
 def _test_parse_tags(tagstring):

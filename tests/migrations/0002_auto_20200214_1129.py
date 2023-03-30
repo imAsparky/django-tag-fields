@@ -5,13 +5,13 @@ import uuid
 import django.utils.timezone
 from django.db import migrations, models
 
-import taggit.managers
+import tag_fields.managers
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("taggit", "0003_taggeditem_add_unique_index"),
+        ("tag_fields", "0003_taggeditem_add_unique_index"),
         ("contenttypes", "0002_remove_content_type_name"),
         ("tests", "0001_initial"),
     ]
@@ -40,11 +40,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="blanktagmodel",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 blank=True,
                 help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
+                through="tag_fields.TaggedItem",
+                to="tag_fields.Tag",
                 verbose_name="Tags",
             ),
         ),
@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="uuidpet",
             name="tags",
-            field=taggit.managers.TaggableManager(
+            field=tag_fields.managers.TaggableManager(
                 help_text="A comma-separated list of tags.",
                 through="tests.UUIDTaggedItem",
                 to="tests.UUIDTag",
