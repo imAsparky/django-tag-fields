@@ -8,4 +8,4 @@ VERSION = (3, 1, 0)
 __version__ = ".".join(str(i) for i in VERSION)
 
 if django and django.VERSION < (3, 2):
-    default_app_config = "taggit.apps.TaggitAppConfig"
+    default_app_config = "tag_fields.apps.TaggitAppConfig"

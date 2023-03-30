@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 (
                     "content_type",
                     models.ForeignKey(
-                        related_name="taggit_taggeditem_tagged_items",
+                        related_name="tag_fields_taggeditem_tagged_items",
                         verbose_name="content type",
                         to="contenttypes.ContentType",
                         help_text="",
@@ -67,8 +67,8 @@ class Migration(migrations.Migration):
                 (
                     "tag",
                     models.ForeignKey(
-                        related_name="taggit_taggeditem_items",
-                        to="taggit.Tag",
+                        related_name="tag_fields_taggeditem_items",
+                        to="tag_fields.Tag",
                         help_text="",
                         on_delete=models.CASCADE,
                     ),

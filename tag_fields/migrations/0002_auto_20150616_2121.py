@@ -3,7 +3,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("taggit", "0001_initial")]
+    dependencies = [("tag_fields", "0001_initial")]
 
     operations = [
         migrations.AlterIndexTogether(
