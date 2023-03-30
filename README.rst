@@ -27,7 +27,7 @@ to abide by the `Contributor Code of Conduct
 
 .. Note::
 
-   This project was cloned from `django-taggit v3.1.0` and will continue work in the same
+   This project was cloned from `django-taggit v3.1.0` and will continue to work in the same
    way as that version.
 
    Over time I endeavor to extend django-taggit with individual field tagging.
