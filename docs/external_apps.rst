@@ -1,7 +1,7 @@
 External Applications
 =====================
 
-In addition to the features included in ``django-taggit`` directly, there are a
+In addition to the features included in ``django-tag-fields`` directly, there are a
 number of external applications which provide additional features that may be
 of interest.
 
@@ -10,9 +10,13 @@ of interest.
     Despite their mention here, the following applications are in no way
     official, nor have they in any way been reviewed or tested.
 
+    These applications are specific to django-taggit and will continue to perform
+    in django-tag-fields in the same manner as django-taggit.
+
 If you have an application that you'd like to see listed here, simply fork
-`django-taggit on github <https://github.com/jazzband/django-taggit>`_,
+`django-tag-fields on github <https://github.com/imAsparky/django-tag-fields>`_,
 add it to this list, and send a pull request.
+
 
  * `django-taggit-anywhere <https://github.com/bashu/django-taggit-anywhere>`_:
    Simpler approach to tagging with ``taggit``. Additionally this

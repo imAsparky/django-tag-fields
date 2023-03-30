@@ -2,7 +2,7 @@ extensions = ["sphinx.ext.intersphinx"]
 
 master_doc = "index"
 
-project = "django-taggit"
+project = "django-tag-fields"
 copyright = "Alex Gaynor and individual contributors."
 
 # The short X.Y version.
