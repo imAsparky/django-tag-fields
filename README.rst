@@ -17,8 +17,8 @@ django-tag-fields
    :target: https://github.com/imAsparky/django-tag-fields/actions
    :alt: GitHub Actions
 
-.. .. image:: https://codecov.io/gh/jazzband/django-taggit/coverage.svg?branch=master
-..     :target: https://codecov.io/gh/jazzband/django-taggit?branch=master
+.. image:: https://codecov.io/gh/imAsparky/django-tag-fields/branch/main/graph/badge.svg?token=6TPEAAOUUF
+   :target: https://codecov.io/gh/imAsparky/django-tag-fields
 
 This is a clone of the  `Jazzband <https://github.com/jazzband/django-taggit>`_ project. By contributing you agree
 to abide by the `Contributor Code of Conduct
