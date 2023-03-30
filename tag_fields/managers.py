@@ -18,13 +18,13 @@ from django.utils.functional import cached_property
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
-from taggit.forms import TagField
-from taggit.models import (
+from tag_fields.forms import TagField
+from tag_fields.models import (
     CommonGenericTaggedItemBase,
     GenericUUIDTaggedItemBase,
     TaggedItem,
 )
-from taggit.utils import require_instance_manager
+from tag_fields.utils import require_instance_manager
 
 
 class ExtraJoinRestriction:

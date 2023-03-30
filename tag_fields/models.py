@@ -88,7 +88,7 @@ class Tag(TagBase):
     class Meta:
         verbose_name = _("tag")
         verbose_name_plural = _("tags")
-        app_label = "taggit"
+        app_label = "tag_fields"
 
 
 class ItemBase(models.Model):
@@ -186,6 +186,6 @@ class TaggedItem(GenericTaggedItemBase, TaggedItemBase):
     class Meta:
         verbose_name = _("tagged item")
         verbose_name_plural = _("tagged items")
-        app_label = "taggit"
+        app_label = "tag_fields"
         index_together = [["content_type", "object_id"]]
         unique_together = [["content_type", "object_id", "tag"]]

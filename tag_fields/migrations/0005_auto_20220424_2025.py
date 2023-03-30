@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("taggit", "0004_alter_taggeditem_content_type_alter_taggeditem_tag"),
+        ("tag_fields", "0004_alter_taggeditem_content_type_alter_taggeditem_tag"),
     ]
 
     operations = [

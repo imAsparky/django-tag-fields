@@ -1,5 +1,5 @@
 """
-Django-taggit serializer support
+Django-tag_fields serializer support
 
 Originally vendored from https://github.com/glemmaPaul/django-taggit-serializer
 """

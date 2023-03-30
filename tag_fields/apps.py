@@ -3,6 +3,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class TaggitAppConfig(BaseConfig):
-    name = "taggit"
-    verbose_name = _("Taggit")
+    name = "tag_fields"
+    verbose_name = _("Tag Fields")
     default_auto_field = "django.db.models.AutoField"
