@@ -8,7 +8,7 @@ This has been hard cloned from django-taggit, and continus to work as
 django-taggit==3.1.0
 
 
-``django-tag-fields`` works with Django 2.2+ and Python 3.6+.
+``django-tag-fields`` works with Django 3.2+ and Python 3.6+.
 
 .. toctree::
    :maxdepth: 2
