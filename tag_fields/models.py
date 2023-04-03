@@ -102,12 +102,18 @@ class ItemBase(models.Model):
         abstract = True
 
     @classmethod
-    def tag_model(cls):
+    def tag_model(cls, field: str = None):
+        if field is None:
+            field = "tag"
+
         field = cls._meta.get_field("tag")
         return field.remote_field.model
 
     @classmethod
-    def tag_relname(cls):
+    def tag_relname(cls, field: str = None):
+        if field is None:
+            field = "tag"
+
         field = cls._meta.get_field("tag")
         return field.remote_field.related_name
 
