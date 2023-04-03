@@ -1,0 +1,29 @@
+# For more configuration details:
+# https://docs.codecov.io/docs/codecov-yaml
+
+# Check if this file is valid by running in bash:
+# curl -X POST --data-binary @.codecov.yml https://codecov.io/validate
+
+# Coverage configuration
+# ----------------------
+codecov:
+  # token: "<some token here>"
+  bot: "imAsparky"
+  ci:
+    - "github.com"
+  strict_yaml_branch: "main"
+  max_report_age: 24
+  disable_default_path_fixes: no
+  require_ci_to_pass: yes
+  notify:
+    after_n_builds: 1
+    wait_for_ci: yes
+
+
+# Ignoring Paths
+# --------------
+# which folders/files to ignore
+ignore:
+  - tests/*
+  - setup.py
+  - .github/*
