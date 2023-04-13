@@ -1,5 +1,6 @@
 from io import StringIO
 from unittest import mock
+import django
 
 from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
@@ -588,12 +589,25 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
 
         pks = self.pet_model.objects.filter(tags__name__in=["fuzzy"])
         model_name = self.pet_model.__name__
-        self.assertQuerysetEqual(
-            pks,
-            [f"<{model_name}: kitty>", f"<{model_name}: cat>"],
-            ordered=False,
-            transform=repr,
-        )
+
+        # This `if` is required to handle a change in Django 4.2.
+        # https://docs.djangoproject.com/en/4.2/releases/4.2/#id1
+        # TransactionTestCase.assertQuerysetEqual() is deprecated in Django 5.1
+        # in favor of assertQuerySetEqual()
+        if django.VERSION >= (4, 2):
+            self.assertQuerySetEqual(
+                pks,
+                [f"<{model_name}: kitty>", f"<{model_name}: cat>"],
+                ordered=False,
+                transform=repr,
+            )
+        else:
+            self.assertQuerysetEqual(
+                pks,
+                [f"<{model_name}: kitty>", f"<{model_name}: cat>"],
+                ordered=False,
+                transform=repr,
+            )
 
     def test_exclude(self):
         apple = self.food_model.objects.create(name="apple")
@@ -606,12 +620,26 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
 
         pks = self.food_model.objects.exclude(tags__name__in=["red"])
         model_name = self.food_model.__name__
-        self.assertQuerysetEqual(
-            pks,
-            [f"<{model_name}: pear>", f"<{model_name}: guava>"],
-            ordered=False,
-            transform=repr,
-        )
+
+        # This `if` is required to handle a change in Django 4.2.
+        # https://docs.djangoproject.com/en/4.2/releases/4.2/#id1
+        # TransactionTestCase.assertQuerysetEqual() is deprecated in Django 5.1
+        # in favor of assertQuerySetEqual()
+
+        if django.VERSION >= (4, 2):
+            self.assertQuerySetEqual(
+                pks,
+                [f"<{model_name}: pear>", f"<{model_name}: guava>"],
+                ordered=False,
+                transform=repr,
+            )
+        else:
+            self.assertQuerysetEqual(
+                pks,
+                [f"<{model_name}: pear>", f"<{model_name}: guava>"],
+                ordered=False,
+                transform=repr,
+            )
 
     def test_multi_inheritance_similarity_by_tag(self):
         """Test that pears are more similar to apples than watermelons using multi_inheritance"""
