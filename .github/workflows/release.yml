@@ -38,4 +38,4 @@ jobs:
         with:
           user: imAsparky
           password: ${{ secrets.PYPI_RELEASE_KEY }}
-          repository_url: https://imAsparky/projects/django-tag-fields/upload
+          repository-url: https://imAsparky/projects/django-tag-fields/upload
