@@ -4,6 +4,8 @@ Changelog
 (Unreleased)
 ~~~~~~~~~~~~
 
+<!--next-version-placeholder-->
+
 4.0.0 (2023-03-30)
 ~~~~~~~~~~~~~~~~~~
 * Initial release of django-tag-fields.
