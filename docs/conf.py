@@ -3,12 +3,11 @@ extensions = ["sphinx.ext.intersphinx"]
 master_doc = "index"
 
 project = "django-tag-fields"
-copyright = "Alex Gaynor and individual contributors."
+copyright = "Alex Gaynor, Mark Sevelj and individual contributors."
 
-# The short X.Y version.
-version = "1.3"
+__version__ = "4.0.0"
 # The full version, including alpha/beta/rc tags.
-release = "1.3.0"
+release = __version__
 
 intersphinx_mapping = {
     "django": (

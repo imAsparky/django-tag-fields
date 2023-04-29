@@ -1,11 +1,15 @@
 django-tag-fields
 =================
 
+.. image:: https://www.repostatus.org/badges/latest/active.svg
+   :alt: Project Status: Active - The project has reached a stable, usable state and is being actively developed.
+   :target: https://www.repostatus.org/#active
+
 .. image:: https://img.shields.io/pypi/pyversions/django-tag_fields.svg
    :target: https://pypi.org/project/django-taggit/
    :alt: Supported Python versions
 
-.. image:: https://img.shields.io/pypi/djversions/django-taggit.svg
+.. image:: https://img.shields.io/pypi/frameworkversions/django/django-tag-fields?logo=django
    :target: https://pypi.org/project/django-taggit/
    :alt: Supported Django versions
 
@@ -16,7 +20,12 @@ django-tag-fields
 .. image:: https://codecov.io/gh/imAsparky/django-tag-fields/branch/main/graph/badge.svg?token=6TPEAAOUUF
    :target: https://codecov.io/gh/imAsparky/django-tag-fields
 
+.. image:: https://readthedocs.org/projects/django-tag-fields/badge/?version=latest
+   :target: https://django-tag-fields.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
 This is a clone of `Jazzband django-taggit <https://github.com/jazzband/django-taggit>`_ project.
+
 By contributing you agree to abide by the `Contributor Code of Conduct
 <https://github.com/imAsparky/django-tag-fields/blob/main/CODE_OF_CONDUCT.md>`_.
 
@@ -67,4 +76,4 @@ For more info check out the `documentation
 <https://django-tag-fields.readthedocs.io/>`_.
 
 For questions about usage or development you can create an issue on Github (if your question is about
-usage please add the `question` label).
+usage please add the ``question`` label).
