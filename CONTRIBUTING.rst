@@ -1,14 +1,9 @@
-Contributing to django-taggit
-=============================
-
-.. .. image:: https://jazzband.co/static/img/jazzband.svg
-..    :target: https://jazzband.co/
-..    :alt: Jazzband
+Contributing to django-tag-fields
+=================================
 
 This project is a clone of  `Jazzband <https://github.com/jazzband/django-taggit>`_ project.
 By contributing you agree to abide by the `Contributor Code of Conduct
-<https://jazzband.co/about/conduct>`_ and follow the `guidelines
-<https://jazzband.co/about/guidelines>`_.
+<https://github.com/imAsparky/django-tag-fields/blob/main/CODE_OF_CONDUCT.md>`_.
 
 Thank you for taking the time to contribute to django-tag-fields.
 
@@ -32,7 +27,7 @@ own fork in your development environment:
 
     git clone git@github.com:<your_fork>/django-tag-fields.git
     cd django-tag-fields
-    python setup.py develop
+    python -m pip install -e .
 
 Running tests
 -------------
@@ -64,7 +59,7 @@ To do work on the docs, proceed with the following steps:
 
 .. code-block:: console
 
-    pip install sphinx
+    pip install -r requirements/docs.txt
     sphinx-build -n -W docs docs/_build
 
 Add a changelog line
@@ -82,15 +77,65 @@ It is now time to push your changes to GitHub and open a `pull request
 <https://github.com/imAsparky/django-tag-fields/pulls>`_!
 
 
-Release Checklist
------------------
+Commit/Release process
+----------------------
 
-These steps need to happen by a release maintainer.
+Releases are handled by `python-semantic-release <https://python-semantic-release.readthedocs.io/en/latest/>`_.
 
-To make a release, the following needs to happen:
+.. caution::
 
-- Bump the version number in ``tag_fields/__init__.py``
-- Update the changelog (making sure to add the (Unreleased) section to the top)
-- Get those changes onto the ``main`` branch
-- Tag the commit with the version number
-- CI should then upload a release to be verified by imAsparky
+    Its important that you DO NOT change the version numbers in the code.
+    This will confuse the automatic release updating.
+
+For automatic releases to operate correctly its important to follow the
+`Conventional Commits Format <https://www.conventionalcommits.org/en/v1.0.0/>`_.
+
+Conventional commits provides a nice easy to read format in the repository and helps to
+find relevent commit information with a quick scan.
+
+|
+
+.. code-block:: vim
+    :caption: TLDR: Example of commit message with issue number.
+
+    docs(Contrib): Update README typos #42
+
+    Long description of commit if needed.
+
+    closes #42
+
+
+``django-tag-fields`` comes with a custom commit message template, see an
+excerpt below.
+
+If you would like to use this template, which has some built in help you can
+simply update your local git repo with the following command.
+
+
+.. code-block:: bash
+
+    git config --local commit.template .github/.git-commit-template.txt
+
+|
+
+.. code-block:: vim
+    :caption:  Available tags for commit message.
+
+    # Tags with ** will be included in the CHANGELOG
+
+    # **   chore    (a chore that needs to be done)
+    #      dbg      (changes in debugging code/frameworks; no production code change)
+    #      defaults (changes default options)
+    # **   docs      (changes to documentation)
+    # **   feat     (new feature)
+    # **   fix      (bug fix)
+    #      hack     (temporary fix to make things move forward; please avoid it)
+    #      license  (edits regarding licensing; no production code change)
+    # **   perf     (performance improvement)
+    # **   refactor (refactoring code)
+    # **   style    (formatting, missing semi colons, etc; no code change)
+    # **   test     (adding or refactoring tests; no production code change)
+    #      version  (version bump/new release; no production code change)
+    #      WIP      (Work In Progress; for intermediate commits to keep patches reasonably sized)
+    #      jsrXXX   (patches related to the implementation of jsrXXX, where XXX the JSR number)
+    #      jdkX     (patches related to supporting jdkX as the host VM, where X the JDK version)
