@@ -1,9 +1,81 @@
+[build-system]
+requires = [
+    "setuptools>=67",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+# [tool.setuptools]
+# packages = [
+#     "tag_fields"
+# ]
+
+[tool.setuptools.packages.find]
+where = ["tag_fields"]
+# include = ["pkg*"]  # alternatively: `exclude = ["additional*"]`
+namespaces = false
+
+[project]
+version = "4.0.0"
+
+name = "django-tag-fields"
+description = "Add field tags to a Django project"
+
+authors = [
+  {name = "Alex Gaynor", email = "alex.gaynor@gmail.com"},
+  {name = "Mark Sevelj", email = "mark.sevelj@dunwright.com.au"},
+]
+maintainers = [
+  {name = "Mark Sevelj", email = "mark.sevelj@dunwright.com.au"}
+]
+readme = "README.rst"
+
+license= {file = "LICENSE"}
+
+keywords = [
+    "Django",
+    "django",
+    "django tagging",
+]
+
+requires-python = ">=3.6"
+dependencies = [
+    "Django>=3.2"
+]
+
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 4.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+
+[project_urls]
+Documentation = "https://django-tag-fields.readthedocs.io"
+Repository = "https://github.com/imAsparky/django-tag-fields"
+Tracker = "https://github.com/imAsparky/django-tag-fields/issues"
+
+
 [tool.semantic_release]
 
 branch = "main"
-version_variable = "docs/conf.py:__version__,tag_fields/__init__.py:__version__"
+version_variable = "docs/conf.py:__version__,tag_fields/__init__.py:__version__, pyproject.toml:version"
 
-build_command = ""
+build_command = "pyproject-build"
 remove_dist = false
 upload_to_release = false
 
