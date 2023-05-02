@@ -1,10 +1,7 @@
 [build-system]
-requires = ["setuptools>=67", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
-[tool.setuptools.packages.find]
-namespaces = false
-where = ["tag_fields"]
 
 [project]
 authors = [{ name = "Alex Gaynor", email = "alex.gaynor@gmail.com" }]
@@ -29,13 +26,16 @@ classifiers = [
 ]
 dependencies = ["Django>=3.2"]
 description = "Add field tags to a Django project"
+dynamic = ["version"]
 keywords = ["Django", "django", "django tagging"]
 license = { file = "LICENSE" }
 maintainers = [{ name = "Mark Sevelj", email = "mark.sevelj@dunwright.com.au" }]
 name = "django-tag-fields"
 readme = "README.rst"
 requires-python = ">=3.6"
-version = "4.0.0"
+
+[tool.flit.module]
+name = "tag_fields"
 
 [project.urls]
 Documentation = "https://django-tag-fields.readthedocs.io"
@@ -52,7 +52,7 @@ major_on_zero = false
 remove_dist = false
 upload_to_release = false
 upload_to_pypi = true
-version_variable = "docs/conf.py:__version__,tag_fields/__init__.py:__version__, pyproject.toml:version"
+version_variable = "docs/conf.py:__version__,tag_fields/__init__.py:__version__"
 
 
 [tool.bandit]
