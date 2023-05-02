@@ -47,7 +47,9 @@ class ExtraJoinRestriction:
             extra_where = f"{qn(self.alias)}.{qn(self.col)} = %s"
         else:
             extra_where = "{}.{} IN ({})".format(
-                qn(self.alias), qn(self.col), ",".join(["%s"] * len(self.content_types))
+                qn(self.alias),
+                qn(self.col),
+                ",".join(["%s"] * len(self.content_types)),
             )
         return extra_where, self.content_types
 
@@ -59,9 +61,16 @@ class ExtraJoinRestriction:
 
 
 class _TaggableManager(models.Manager):
-    # TODO investigate whether we can use a RelatedManager instead of all this stuff
-    # to take advantage of all the Django goodness
-    def __init__(self, through, model, instance, prefetch_cache_name, ordering=None):
+    # TODO investigate whether we can use a RelatedManager instead of all this
+    # stuff to take advantage of all the Django goodness
+    def __init__(
+        self,
+        through,
+        model,
+        instance,
+        prefetch_cache_name,
+        ordering=None,
+    ):
         super().__init__()
         self.through = through
         self.model = model
@@ -77,12 +86,14 @@ class _TaggableManager(models.Manager):
 
     def get_queryset(self, extra_filters=None):
         try:
-            return self.instance._prefetched_objects_cache[self.prefetch_cache_name]
+            return self.instance._prefetched_objects_cache[
+                self.prefetch_cache_name
+            ]
         except (AttributeError, KeyError):
             kwargs = extra_filters if extra_filters else {}
-            return self.through.tags_for(self.model, self.instance, **kwargs).order_by(
-                *self.ordering
-            )
+            return self.through.tags_for(
+                self.model, self.instance, **kwargs
+            ).order_by(*self.ordering)
 
     def get_prefetch_queryset(self, instances, queryset=None):
         if queryset is not None:
@@ -145,7 +156,9 @@ class _TaggableManager(models.Manager):
         return self.through.lookup_kwargs(self.instance)
 
     def _remove_prefetched_objects(self):
-        prefetch_cache = getattr(self.instance, "_prefetched_objects_cache", None)
+        prefetch_cache = getattr(
+            self.instance, "_prefetched_objects_cache", None
+        )
         if prefetch_cache:
             prefetch_cache.pop(self.prefetch_cache_name, None)
 
@@ -246,7 +259,9 @@ class _TaggableManager(models.Manager):
             else:
                 lookup = {"name": new_tag, **tag_kwargs}
 
-            tag, create = manager.get_or_create(**lookup, defaults={"name": new_tag})
+            tag, create = manager.get_or_create(
+                **lookup, defaults={"name": new_tag}
+            )
             tag_objs.add(tag)
 
         return tag_objs
@@ -350,7 +365,9 @@ class _TaggableManager(models.Manager):
             using=db,
         )
 
-        self.through._default_manager.using(db).filter(**self._lookup_kwargs()).delete()
+        self.through._default_manager.using(db).filter(
+            **self._lookup_kwargs()
+        ).delete()
 
         signals.m2m_changed.send(
             sender=self.through,
@@ -394,7 +411,9 @@ class _TaggableManager(models.Manager):
             objs = rel_model._default_manager.filter(
                 **{
                     "%s__in"
-                    % remote_field.field_name: [r["content_object"] for r in qs]
+                    % remote_field.field_name: [
+                        r["content_object"] for r in qs
+                    ]
                 }
             )
             actual_remote_field_name = f.target_field.get_attname()
@@ -408,7 +427,9 @@ class _TaggableManager(models.Manager):
 
             for ct, obj_ids in preload.items():
                 ct = ContentType.objects.get_for_id(ct)
-                for obj in ct.model_class()._default_manager.filter(pk__in=obj_ids):
+                for obj in ct.model_class()._default_manager.filter(
+                    pk__in=obj_ids
+                ):
                     items[(ct.pk, obj.pk)] = obj
 
         results = []
@@ -441,7 +462,9 @@ class TaggableManager(RelatedField):
     ):
         self.through = through or TaggedItem
 
-        rel = ManyToManyRel(self, to, related_name=related_name, through=self.through)
+        rel = ManyToManyRel(
+            self, to, related_name=related_name, through=self.through
+        )
 
         super().__init__(
             verbose_name=verbose_name,
@@ -479,7 +502,7 @@ class TaggableManager(RelatedField):
         for kwarg in ("serialize", "null"):
             del kwargs[kwarg]
         # Add arguments related to relations.
-        # Ref: https://github.com/jazzband/django-taggit/issues/206#issuecomment-37578676
+        # Ref: https://github.com/jazzband/django-taggit/issues/206#issuecomment-37578676 # noqa: E501
         rel = self.remote_field
         if isinstance(rel.through, str):
             kwargs["through"] = rel.through
@@ -512,7 +535,10 @@ class TaggableManager(RelatedField):
                     field.remote_field.model = model
 
                 lazy_related_operation(
-                    resolve_related_class, cls, self.remote_field.model, field=self
+                    resolve_related_class,
+                    cls,
+                    self.remote_field.model,
+                    field=self,
                 )
             if isinstance(self.through, str):
 
@@ -599,11 +625,13 @@ class TaggableManager(RelatedField):
     def _get_mm_case_path_info(self, direct=False, filtered_relation=None):
         pathinfos = []
         linkfield1 = self.through._meta.get_field("content_object")
-        linkfield2 = self.through._meta.get_field(self.m2m_reverse_field_name())
+        linkfield2 = self.through._meta.get_field(
+            self.m2m_reverse_field_name()
+        )
         if django.VERSION >= (4, 1) and not filtered_relation:
-            # Django >= 4.1 provides cached path_infos and reverse_path_infos properties
-            # to use in preference to get_path_info / get_reverse_path_info when not
-            # passing a filtered_relation
+            # Django >= 4.1 provides cached path_infos and reverse_path_infos
+            # properties to use in preference to get_path_info /
+            # get_reverse_path_info when not passing a filtered_relation
             if direct:
                 join1infos = linkfield1.reverse_path_infos
                 join2infos = linkfield2.path_infos
@@ -703,10 +731,28 @@ class TaggableManager(RelatedField):
         return self.get_reverse_path_info()
 
     def get_joining_columns(self, reverse_join=False):
+        # RemovedInDjango60Warning
+        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d
         if reverse_join:
             return ((self.model._meta.pk.column, "object_id"),)
         else:
             return (("object_id", self.model._meta.pk.column),)
+
+    def get_joining_fields(self, reverse_join=False):
+        if reverse_join:
+            return (
+                (
+                    self.model._meta.pk,
+                    self.remote_field.through._meta.get_field("object_id"),
+                ),
+            )
+        else:
+            return (
+                (
+                    self.remote_field.through._meta.get_field("object_id"),
+                    self.model._meta.pk,
+                ),
+            )
 
     def _get_extra_restriction(self, alias, related_alias):
         extra_col = self.through._meta.get_field("content_type").column
@@ -729,11 +775,18 @@ class TaggableManager(RelatedField):
         get_extra_restriction = _get_extra_restriction
 
     def get_reverse_joining_columns(self):
+        # RemovedInDjango60Warning
+        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d
         return self.get_joining_columns(reverse_join=True)
+
+    def get_reverse_joining_fields(self):
+        return self.get_joining_fields(reverse_join=True)
 
     @property
     def related_fields(self):
-        return [(self.through._meta.get_field("object_id"), self.model._meta.pk)]
+        return [
+            (self.through._meta.get_field("object_id"), self.model._meta.pk)
+        ]
 
     @property
     def foreign_related_fields(self):
