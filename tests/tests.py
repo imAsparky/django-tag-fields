@@ -2,6 +2,8 @@ from io import StringIO
 from unittest import mock
 import django
 
+from django import VERSION as DJANGO_VERSION
+
 from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.core.exceptions import ValidationError
@@ -202,7 +204,9 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         )
 
         self.assert_tags_equal(
-            self.food_model.tags.most_common(min_count=2), ["green"], sort=False
+            self.food_model.tags.most_common(min_count=2),
+            ["green"],
+            sort=False,
         )
 
         apple.tags.remove("green")
@@ -483,40 +487,42 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         # Prefill content type cache:
         ContentType.objects.get_for_model(self.food_model)
         apple = self.food_model.objects.create(name="apple")
-        # 1. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" IN ('green', 'red', 'delicious')
-        # 2. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'green'
+        # 1. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" IN ('green', 'red', 'delicious') # noqa: E501
+        # 2. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'green' # noqa: E501
         # 3. SAVEPOINT
         # 4. SAVEPOINT
-        # 5. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('green', 'green')
+        # 5. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('green', 'green') # noqa: E501
         # 6. RELEASE SAVEPOINT
         # 7. RELEASE SAVEPOINT
-        # 8. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'red'
+        # 8. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'red' # noqa: E501
         # 9. SAVEPOINT
         # 10. SAVEPOINT
-        # 11. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('red', 'red')
+        # 11. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('red', 'red') # noqa: E501
         # 12. RELEASE SAVEPOINT
         # 13. RELEASE SAVEPOINT
-        # 14. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'delicious'
+        # 14. SELECT "tag_fields_tag"."id", "tag_fields_tag"."name", "tag_fields_tag"."slug" FROM "tag_fields_tag" WHERE "tag_fields_tag"."name" = 'delicious' # noqa: E501
         # 15. SAVEPOINT
         # 16. SAVEPOINT
-        # 17. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('delicious', 'delicious')
+        # 17. INSERT INTO "tag_fields_tag" ("name", "slug") VALUES ('delicious', 'delicious') # noqa: E501
         # 18. RELEASE SAVEPOINT
         # 19. RELEASE SAVEPOINT
-        # 20. SELECT "tag_fields_taggeditem"."tag_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1)
-        # 21. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 1)
+        # 20. SELECT "tag_fields_taggeditem"."tag_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1) # noqa: E501
+        # 21. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 1) # noqa: E501
         # 22. SAVEPOINT
-        # 23. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (1, 20, 1)
+        # 23. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (1, 20, 1) # noqa: E501
         # 24. RELEASE SAVEPOINT
-        # 25. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 2)
+        # 25. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 2) # noqa: E501
         # 26. SAVEPOINT
-        # 27. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (2, 20, 1)
+        # 27. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (2, 20, 1) # noqa: E501
         # 28. RELEASE SAVEPOINT
-        # 29. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 3)
+        # 29. SELECT "tag_fields_taggeditem"."id", "tag_fields_taggeditem"."tag_id", "tag_fields_taggeditem"."content_type_id", "tag_fields_taggeditem"."object_id" FROM "tag_fields_taggeditem" WHERE ("tag_fields_taggeditem"."content_type_id" = 20 AND "tag_fields_taggeditem"."object_id" = 1 AND "tag_fields_taggeditem"."tag_id" = 3) # noqa: E501
         # 30. SAVEPOINT
-        # 31. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (3, 20, 1)
+        # 31. INSERT INTO "tag_fields_taggeditem" ("tag_id", "content_type_id", "object_id") VALUES (3, 20, 1) # noqa: E501
         # 32. RELEASE SAVEPOINT
         queries = 32
-        self.assertNumQueries(queries, apple.tags.add, "red", "delicious", "green")
+        self.assertNumQueries(
+            queries, apple.tags.add, "red", "delicious", "green"
+        )
 
         pear = self.food_model.objects.create(name="pear")
         #   1 query to see which tags exist
@@ -533,8 +539,8 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
     def test_require_pk(self):
         food_instance = self.food_model()
         msg = (
-            "%s objects need to have a primary key value before you can access "
-            "their tags." % type(self.food_model()).__name__
+            "%s objects need to have a primary key value before you can access"
+            " their tags." % type(self.food_model()).__name__
         )
         with self.assertRaisesMessage(ValueError, msg):
             food_instance.tags.all()
@@ -565,7 +571,8 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         pear = self.food_model.objects.create(name="pear")
         pear.tags.add("green")
         self.assertEqual(
-            list(self.food_model.objects.filter(tags__name__in=["red"])), [apple]
+            list(self.food_model.objects.filter(tags__name__in=["red"])),
+            [apple],
         )
         self.assertEqual(
             list(self.food_model.objects.filter(tags__name__in=["green"])),
@@ -577,12 +584,18 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         dog = self.pet_model.objects.create(name="dog")
         dog.tags.add("woof", "red")
         self.assertEqual(
-            list(self.food_model.objects.filter(tags__name__in=["red"]).distinct()),
+            list(
+                self.food_model.objects.filter(
+                    tags__name__in=["red"]
+                ).distinct()
+            ),
             [apple],
         )
 
         tag = self.tag_model.objects.get(name="woof")
-        self.assertEqual(list(self.pet_model.objects.filter(tags__in=[tag])), [dog])
+        self.assertEqual(
+            list(self.pet_model.objects.filter(tags__in=[tag])), [dog]
+        )
 
         cat = self.housepet_model.objects.create(name="cat", trained=True)
         cat.tags.add("fuzzy")
@@ -642,14 +655,16 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
             )
 
     def test_multi_inheritance_similarity_by_tag(self):
-        """Test that pears are more similar to apples than watermelons using multi_inheritance"""
+        """Test pears are more similar to apples than watermelons using multi_inheritance"""  # noqa: E501
         apple = self.multi_inheritance_food_model.objects.create(name="apple")
         apple.tags.add("green", "juicy", "small", "sour")
 
         pear = self.multi_inheritance_food_model.objects.create(name="pear")
         pear.tags.add("green", "juicy", "small", "sweet")
 
-        watermelon = self.multi_inheritance_food_model.objects.create(name="watermelon")
+        watermelon = self.multi_inheritance_food_model.objects.create(
+            name="watermelon"
+        )
         watermelon.tags.add("green", "juicy", "large", "sweet")
 
         similar_objs = apple.tags.similar_objects()
@@ -691,21 +706,26 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         apple.tags.add("juicy")
 
         self.assertEqual(
-            str(self.taggeditem_model.objects.first()), "apple tagged with juicy"
+            str(self.taggeditem_model.objects.first()),
+            "apple tagged with juicy",
         )
 
     def test_taggeditem_through_defaults(self):
         if self.taggeditem_model != OfficialThroughModel:
             self.skipTest(
-                "Through default tests are only run when the tagged item model has extra_field"
+                "Through default tests are only run when the tagged item"
+                "model has extra_field"
             )
         apple = self.food_model.objects.create(name="kiwi")
         apple.tags.add("juicy", through_defaults={"extra_field": "green"})
 
         self.assertEqual(
-            str(self.taggeditem_model.objects.first()), "kiwi tagged with juicy"
+            str(self.taggeditem_model.objects.first()),
+            "kiwi tagged with juicy",
         )
-        self.assertEqual(self.taggeditem_model.objects.first().extra_field, "green")
+        self.assertEqual(
+            self.taggeditem_model.objects.first().extra_field, "green"
+        )
 
     def test_abstract_subclasses(self):
         p = Photo.objects.create()
@@ -745,7 +765,9 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
         apple = self.food_model.objects.create(name="apple")
         apple.tags.add("green and juicy")
         apple.tags.add("red")
-        self.assertEqual(sorted(list(apple.tags.slugs())), ["green-and-juicy", "red"])
+        self.assertEqual(
+            sorted(list(apple.tags.slugs())), ["green-and-juicy", "red"]
+        )
 
     def test_serializes(self):
         apple = self.food_model.objects.create(name="apple")
@@ -761,18 +783,26 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
                 self.food_model.objects.prefetch_related("tags").all()
             )
         with self.assertNumQueries(0):
-            foods = {f.name: {t.name for t in f.tags.all()} for f in list_prefetched}
-            self.assertEqual(foods, {"orange": {"2", "4"}, "apple": {"1", "2"}})
+            foods = {
+                f.name: {t.name for t in f.tags.all()} for f in list_prefetched
+            }
+            self.assertEqual(
+                foods, {"orange": {"2", "4"}, "apple": {"1", "2"}}
+            )
 
     def test_internal_type_is_manytomany(self):
-        self.assertEqual(TaggableManager().get_internal_type(), "ManyToManyField")
+        self.assertEqual(
+            TaggableManager().get_internal_type(), "ManyToManyField"
+        )
 
     def test_prefetch_no_extra_join(self):
         apple = self.food_model.objects.create(name="apple")
         apple.tags.add("1", "2")
         with self.assertNumQueries(2):
             list(self.food_model.objects.prefetch_related("tags").all())
-            join_clause = 'INNER JOIN "%s"' % self.taggeditem_model._meta.db_table
+            join_clause = (
+                'INNER JOIN "%s"' % self.taggeditem_model._meta.db_table
+            )
             self.assertEqual(
                 connection.queries[-1]["sql"].count(join_clause),
                 1,
@@ -885,7 +915,9 @@ class TaggableManagerOfficialTestCase(TaggableManagerTestCase):
         pear = self.food_model.objects.create(name="Pear")
         pear.tags.add("delicious")
 
-        self.assertEqual(apple, self.food_model.objects.get(tags__official=False))
+        self.assertEqual(
+            apple, self.food_model.objects.get(tags__official=False)
+        )
 
     def test_get_tags_with_count(self):
         apple = self.food_model.objects.create(name="apple")
@@ -913,7 +945,8 @@ class TaggableManagerOfficialTestCase(TaggableManagerTestCase):
 
         self.assert_tags_equal(
             self.food_model.tags.most_common(
-                min_count=2, extra_filters={"officialfood__name__in": ["pear", "apple"]}
+                min_count=2,
+                extra_filters={"officialfood__name__in": ["pear", "apple"]},
             )[:1],
             ["green"],
             sort=False,
@@ -947,11 +980,22 @@ class TaggableFormTestCase(BaseTaggingTestCase):
     food_model = Food
 
     def _get_form_str(self, form_str):
-        form_str %= {
-            "help_start": '<span class="helptext">',
-            "help_stop": "</span>",
-            "required": "required",
-        }
+        # Fix as per laymonage https://github.com/jazzband/django-taggit/issues/851 # noqa: E501
+        if DJANGO_VERSION >= (5, 0):
+            # Django defaults to div-based form rendering in 5.0
+            # https://github.com/django/django/commit/98756c685ee173bbd43f21ed0553f808be835ce5 # noqa: E501
+            # https://github.com/django/django/commit/232b60a21b951bd16b8c95b34fcbcbf3ecd89fca # noqa: E501
+            form_str %= {
+                "help_start": '<div class="helptext">',
+                "help_stop": "</div>",
+                "required": "required",
+            }
+        else:
+            form_str %= {
+                "help_start": '<span class="helptext">',
+                "help_stop": "</span>",
+                "required": "required",
+            }
         return form_str
 
     def assertFormRenders(self, form, html):
@@ -961,52 +1005,104 @@ class TaggableFormTestCase(BaseTaggingTestCase):
         self.assertEqual(list(self.form_class.base_fields), ["name", "tags"])
 
         f = self.form_class({"name": "apple", "tags": "green, red, yummy"})
-        self.assertFormRenders(
-            f,
-            """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
-<tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
-        )
+
+        # Fix as per laymonage https://github.com/jazzband/django-taggit/issues/851 # noqa: E501
+        if DJANGO_VERSION >= (5, 0):
+            self.assertFormRenders(
+                f,
+                """<div><label for="id_name">Name:</label><input id="id_name"
+                type="text" name="name" value="apple" maxlength="50"
+                %(required)s /></div>
+                <div><label for="id_tags">Tags:</label>%(help_start)s
+                A comma-separated list of tags.%(help_stop)s<input type="text"
+                name="tags" value="green, red, yummy" id="id_tags" %(required)s
+                /></div>""",
+            )
+        else:
+            self.assertFormRenders(
+                f,
+                """<tr><th><label for="id_name">Name:</label></th><td><input
+                id="id_name" type="text" name="name" value="apple"
+                maxlength="50" %(required)s /></td></tr><tr><th><label
+                for="id_tags">Tags:</label></th><td><input type="text"
+                name="tags" value="green, red, yummy" id="id_tags"
+                %(required)s /><br />%(help_start)sA comma-separated list of
+                tags.%(help_stop)s</td></tr>""",
+            )
         f.save()
+
         apple = self.food_model.objects.get(name="apple")
         self.assert_tags_equal(apple.tags.all(), ["green", "red", "yummy"])
 
         f = self.form_class(
-            {"name": "apple", "tags": "green, red, yummy, delicious"}, instance=apple
+            {"name": "apple", "tags": "green, red, yummy, delicious"},
+            instance=apple,
         )
         f.save()
         apple = self.food_model.objects.get(name="apple")
-        self.assert_tags_equal(apple.tags.all(), ["green", "red", "yummy", "delicious"])
+        self.assert_tags_equal(
+            apple.tags.all(), ["green", "red", "yummy", "delicious"]
+        )
         self.assertEqual(self.food_model.objects.count(), 1)
 
         f = self.form_class({"name": "raspberry"})
         self.assertFalse(f.is_valid())
 
         f = self.form_class(instance=apple)
-        self.assertFormRenders(
-            f,
-            """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
-<tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="delicious, green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
-        )
+
+        # Fix as per laymonage https://github.com/jazzband/django-taggit/issues/851 # noqa: E501
+        if DJANGO_VERSION >= (5, 0):
+            self.assertFormRenders(
+                f,
+                """<div><label for="id_name">Name:</label><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></div>
+    <div><label for="id_tags">Tags:</label>%(help_start)sA comma-separated list of tags.%(help_stop)s<input type="text" name="tags" value="delicious, green, red, yummy" id="id_tags" %(required)s /></div>""",
+            )
+        else:
+            self.assertFormRenders(
+                f,
+                """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
+    <tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="delicious, green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
+            )
 
         apple.tags.add("has,comma")
         f = self.form_class(instance=apple)
-        self.assertFormRenders(
-            f,
-            """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
-<tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="&quot;has,comma&quot;, delicious, green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
-        )
+
+        # Fix as per laymonage https://github.com/jazzband/django-taggit/issues/851 # noqa: E501
+        if DJANGO_VERSION >= (5, 0):
+            self.assertFormRenders(
+                f,
+                """<div><label for="id_name">Name:</label><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></div>
+    <div><label for="id_tags">Tags:</label>%(help_start)sA comma-separated list of tags.%(help_stop)s<input type="text" name="tags" value="&quot;has,comma&quot;, delicious, green, red, yummy" id="id_tags" %(required)s /></div>""",
+            )
+        else:
+            self.assertFormRenders(
+                f,
+                """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
+    <tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="&quot;has,comma&quot;, delicious, green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
+            )
 
         apple.tags.add("has space")
         f = self.form_class(instance=apple)
-        self.assertFormRenders(
-            f,
-            """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
-<tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="&quot;has space&quot;, &quot;has,comma&quot;, delicious, green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
-        )
+
+        # Fix as per laymonage https://github.com/jazzband/django-taggit/issues/851 # noqa: E501
+        if DJANGO_VERSION >= (5, 0):
+            self.assertFormRenders(
+                f,
+                """<div><label for="id_name">Name:</label><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></div>
+    <div><label for="id_tags">Tags:</label>%(help_start)sA comma-separated list of tags.%(help_stop)s<input type="text" name="tags" value="&quot;has space&quot;, &quot;has,comma&quot;, delicious, green, red, yummy" id="id_tags" %(required)s /></div>""",
+            )
+        else:
+            self.assertFormRenders(
+                f,
+                """<tr><th><label for="id_name">Name:</label></th><td><input id="id_name" type="text" name="name" value="apple" maxlength="50" %(required)s /></td></tr>
+    <tr><th><label for="id_tags">Tags:</label></th><td><input type="text" name="tags" value="&quot;has space&quot;, &quot;has,comma&quot;, delicious, green, red, yummy" id="id_tags" %(required)s /><br />%(help_start)sA comma-separated list of tags.%(help_stop)s</td></tr>""",
+            )
 
     def test_formfield(self):
         tm = TaggableManager(
-            verbose_name="categories", help_text="Add some categories", blank=True
+            verbose_name="categories",
+            help_text="Add some categories",
+            blank=True,
         )
         ff = tm.formfield()
         self.assertEqual(ff.label, "Categories")
@@ -1143,7 +1239,8 @@ class TagStringParseTestCase(SimpleTestCase):
         self.assertEqual(parse_tags(",one two"), ["one two"])
         self.assertEqual(parse_tags(",one two three"), ["one two three"])
         self.assertEqual(
-            parse_tags("a-one, a-two and a-three"), ["a-one", "a-two and a-three"]
+            parse_tags("a-one, a-two and a-three"),
+            ["a-one", "a-two and a-three"],
         )
 
     def test_with_double_quoted_multiple_words(self):
@@ -1156,14 +1253,17 @@ class TagStringParseTestCase(SimpleTestCase):
         self.assertEqual(parse_tags('"one two three'), ["one", "three", "two"])
         self.assertEqual(parse_tags('"one two"'), ["one two"])
         self.assertEqual(
-            parse_tags('a-one "a-two and a-three"'), ["a-one", "a-two and a-three"]
+            parse_tags('a-one "a-two and a-three"'),
+            ["a-one", "a-two and a-three"],
         )
 
     def test_with_no_loose_commas(self):
         """
         Test with no loose commas -- split on spaces.
         """
-        self.assertEqual(parse_tags('one two "thr,ee"'), ["one", "thr,ee", "two"])
+        self.assertEqual(
+            parse_tags('one two "thr,ee"'), ["one", "thr,ee", "two"]
+        )
 
     def test_with_loose_commas(self):
         """
@@ -1176,9 +1276,12 @@ class TagStringParseTestCase(SimpleTestCase):
         Double quotes can contain commas
         """
         self.assertEqual(
-            parse_tags('a-one "a-two, and a-three"'), ["a-one", "a-two, and a-three"]
+            parse_tags('a-one "a-two, and a-three"'),
+            ["a-one", "a-two, and a-three"],
         )
-        self.assertEqual(parse_tags('"two", one, one, two, "one"'), ["one", "two"])
+        self.assertEqual(
+            parse_tags('"two", one, one, two, "one"'), ["one", "two"]
+        )
 
     def test_with_naughty_input(self):
         """
@@ -1202,27 +1305,41 @@ class TagStringParseTestCase(SimpleTestCase):
         spaces = Tag(name="spa ces")
         comma = Tag(name="com,ma")
         self.assertEqual(edit_string_for_tags([plain]), "plain")
-        self.assertEqual(edit_string_for_tags([plain, spaces]), '"spa ces", plain')
         self.assertEqual(
-            edit_string_for_tags([plain, spaces, comma]), '"com,ma", "spa ces", plain'
+            edit_string_for_tags([plain, spaces]), '"spa ces", plain'
         )
-        self.assertEqual(edit_string_for_tags([plain, comma]), '"com,ma", plain')
-        self.assertEqual(edit_string_for_tags([comma, spaces]), '"com,ma", "spa ces"')
+        self.assertEqual(
+            edit_string_for_tags([plain, spaces, comma]),
+            '"com,ma", "spa ces", plain',
+        )
+        self.assertEqual(
+            edit_string_for_tags([plain, comma]), '"com,ma", plain'
+        )
+        self.assertEqual(
+            edit_string_for_tags([comma, spaces]), '"com,ma", "spa ces"'
+        )
 
-    @override_settings(TAGGIT_TAGS_FROM_STRING="tests.custom_parser.comma_splitter")
+    @override_settings(
+        TAGGIT_TAGS_FROM_STRING="tests.custom_parser.comma_splitter"
+    )
     def test_custom_comma_splitter(self):
         self.assertEqual(parse_tags("   Cued Speech "), ["Cued Speech"])
         self.assertEqual(parse_tags(" ,Cued Speech, "), ["Cued Speech"])
         self.assertEqual(parse_tags("Cued Speech"), ["Cued Speech"])
         self.assertEqual(
-            parse_tags("Cued Speech, dictionary"), ["Cued Speech", "dictionary"]
+            parse_tags("Cued Speech, dictionary"),
+            ["Cued Speech", "dictionary"],
         )
 
-    @override_settings(TAGGIT_STRING_FROM_TAGS="tests.custom_parser.comma_joiner")
+    @override_settings(
+        TAGGIT_STRING_FROM_TAGS="tests.custom_parser.comma_joiner"
+    )
     def test_custom_comma_joiner(self):
         a = Tag(name="Cued Speech")
         b = Tag(name="transliterator")
-        self.assertEqual(edit_string_for_tags([a, b]), "Cued Speech, transliterator")
+        self.assertEqual(
+            edit_string_for_tags([a, b]), "Cued Speech, transliterator"
+        )
 
 
 class DeconstructTestCase(SimpleTestCase):
@@ -1273,7 +1390,8 @@ class TagListViewTests(TestCase):
         self.assertIn(self.apple, response.context_data["object_list"])
         self.assertNotIn(self.strawberry, response.context_data["object_list"])
         self.assertEqual(
-            self.apple.tags.first(), response.context_data["extra_context"]["tag"]
+            self.apple.tags.first(),
+            response.context_data["extra_context"]["tag"],
         )
 
     def test_list_view_returns_single(self):
