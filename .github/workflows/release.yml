@@ -19,17 +19,6 @@ jobs:
           # python-semantic-release can decide if a new release is needed.
           fetch-depth: 0
 
-      # - name: Set up Python
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.11"
-
-      # - name: Build package
-      #   run: |
-      #     python3 setup.py --version
-      #     python3 setup.py sdist --format=gztar bdist_wheel
-      #     twine check dist/*
-
       - uses: relekang/python-semantic-release@master
         with:
           github_token: ${{ secrets.PYPI_RELEASE_TOKEN }}
