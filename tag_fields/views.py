@@ -29,13 +29,16 @@ class TagListMixin:
         qs = super().get_queryset(**kwargs)
         return qs.filter(
             pk__in=TaggedItem.objects.filter(
-                tag=self.tag, content_type=ContentType.objects.get_for_model(qs.model)
+                tag=self.tag,
+                content_type=ContentType.objects.get_for_model(qs.model),
             ).values_list("object_id", flat=True)
         )
 
     def get_template_names(self):
         if self.tag_suffix:
-            self.template_name_suffix = self.tag_suffix + self.template_name_suffix
+            self.template_name_suffix = (
+                self.tag_suffix + self.template_name_suffix
+            )
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):

@@ -20,8 +20,8 @@ from django.utils.translation import gettext_lazy as _
 
 from tag_fields.forms import TagField
 from tag_fields.models import (
-    CommonGenericTaggedItemBase,
-    GenericUUIDTaggedItemBase,
+    GenericFKTaggedItemThroughBase,
+    UUIDFKTaggedItemThroughBase,
     TaggedItem,
 )
 from tag_fields.utils import require_instance_manager
@@ -104,7 +104,7 @@ class _TaggableManager(models.Manager):
 
         fieldname = (
             "object_id"
-            if issubclass(self.through, CommonGenericTaggedItemBase)
+            if issubclass(self.through, GenericFKTaggedItemThroughBase)
             else "content_object"
         )
         fk = self.through._meta.get_field(fieldname)
@@ -130,7 +130,7 @@ class _TaggableManager(models.Manager):
             )
         )
 
-        if issubclass(self.through, GenericUUIDTaggedItemBase):
+        if issubclass(self.through, UUIDFKTaggedItemThroughBase):
 
             def uuid_rel_obj_attr(v):
                 value = attrgetter("_prefetch_related_val")(v)
@@ -558,7 +558,7 @@ class TaggableManager(RelatedField):
 
     def post_through_setup(self, cls):
         self.use_gfk = self.through is None or issubclass(
-            self.through, CommonGenericTaggedItemBase
+            self.through, GenericFKTaggedItemThroughBase
         )
 
         if not self.remote_field.model:

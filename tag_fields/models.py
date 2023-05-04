@@ -16,8 +16,15 @@ except ImportError:
 
 
 class TagBase(models.Model):
+    """Abstract Base class for the tags."""
+
+    class Meta:
+        abstract = True
+
     name = models.CharField(
-        verbose_name=pgettext_lazy("A tag name", "name"), unique=True, max_length=100
+        verbose_name=pgettext_lazy("A tag name", "name"),
+        unique=True,
+        max_length=100,
     )
     slug = models.SlugField(
         verbose_name=pgettext_lazy("A tag slug", "slug"),
@@ -34,9 +41,6 @@ class TagBase(models.Model):
 
     def __lt__(self, other):
         return self.name.lower() < other.name.lower()
-
-    class Meta:
-        abstract = True
 
     def save(self, *args, **kwargs):
         if self._state.adding and not self.slug:
@@ -85,21 +89,36 @@ class TagBase(models.Model):
 
 
 class Tag(TagBase):
+    """Model tag for use with your own model.
+
+    This is a model level tag, i.e. there can only be one per model.
+
+    """
+
     class Meta:
         verbose_name = _("tag")
         verbose_name_plural = _("tags")
         app_label = "tag_fields"
 
 
-class ItemBase(models.Model):
+class ThroughTableBase(models.Model):
+    """Base class for a model ``tags`` through table.
+
+    Abstract Base Class: ``through table`` for all ``through table``
+    sub classes.
+
+    taggit class name was ItemBase
+
+    """
+
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return gettext("%(object)s tagged with %(tag)s") % {
             "object": self.content_object,
             "tag": self.tag,
         }
-
-    class Meta:
-        abstract = True
 
     @classmethod
     def tag_model(cls):
@@ -121,20 +140,45 @@ class ItemBase(models.Model):
         if instance is not None:
             kwargs.update({"%s__content_object" % cls.tag_relname(): instance})
             return cls.tag_model().objects.filter(**kwargs)
-        kwargs.update({"%s__content_object__isnull" % cls.tag_relname(): False})
+        kwargs.update(
+            {"%s__content_object__isnull" % cls.tag_relname(): False}
+        )
         return cls.tag_model().objects.filter(**kwargs).distinct()
 
 
-class TaggedItemBase(ItemBase):
-    tag = models.ForeignKey(
-        Tag, related_name="%(app_label)s_%(class)s_items", on_delete=models.CASCADE
-    )
+class TaggedItemThroughBase(ThroughTableBase):
+    """Sub class of ``ThroughTableBase``
+
+    Base class: ``through table`` for a ``Tagged Item`` model.
+
+    taggit class name was TaggedItemBase
+
+    """
 
     class Meta:
         abstract = True
 
+    tag = models.ForeignKey(
+        Tag,
+        related_name="%(app_label)s_%(class)s_items",
+        on_delete=models.CASCADE,
+    )
 
-class CommonGenericTaggedItemBase(ItemBase):
+
+class GenericFKTaggedItemThroughBase(ThroughTableBase):
+    """Abstract subclass of ``ThroughTableBase`` using a ``GenericForeignKey``.
+
+    Base class: ``through table`` for a ``Tagged Item`` model using an
+    ``GenericForeignKey``.
+
+    taggit class name was CommonGenericTaggedItemBase
+
+
+    """
+
+    class Meta:
+        abstract = True
+
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
@@ -142,9 +186,6 @@ class CommonGenericTaggedItemBase(ItemBase):
         related_name="%(app_label)s_%(class)s_tagged_items",
     )
     content_object = GenericForeignKey()
-
-    class Meta:
-        abstract = True
 
     @classmethod
     def lookup_kwargs(cls, instance):
@@ -168,21 +209,54 @@ class CommonGenericTaggedItemBase(ItemBase):
         return cls.tag_model().objects.filter(**kwargs).distinct()
 
 
-class GenericTaggedItemBase(CommonGenericTaggedItemBase):
+class IntegerFKTaggedItemThroughBase(GenericFKTaggedItemThroughBase):
+    """Abstract subclass of ``GenericFKTaggedItemThroughBase`` with
+     ``Integer Foreign Key``.
+
+    Base class: ``through table`` for a ``Tagged Item`` model using an
+    ``integer`` primary key.
+
+    taggit class name was GenericTaggedItemBase
+
+    """
+
+    class Meta:
+        abstract = True
+
     object_id = models.IntegerField(verbose_name=_("object ID"), db_index=True)
 
+
+class UUIDFKTaggedItemThroughBase(GenericFKTaggedItemThroughBase):
+    """Abstract subclass of CommonGenericTaggedItemBase with a
+      ```UUID Foreign Key``.
+
+    Base class: ``through table`` for a ``Tagged Item`` model using an ``UUID``
+    primary key.
+
+    taggit class name was GenericUUIDTaggedItemBase
+
+    """
+
     class Meta:
         abstract = True
 
-
-class GenericUUIDTaggedItemBase(CommonGenericTaggedItemBase):
     object_id = models.UUIDField(verbose_name=_("object ID"), db_index=True)
 
-    class Meta:
-        abstract = True
 
+class TaggedItem(IntegerFKTaggedItemThroughBase, TaggedItemThroughBase):
+    """Tagged Item Through Table using Integer Foreign Key.
 
-class TaggedItem(GenericTaggedItemBase, TaggedItemBase):
+    Allows custom Tag models. Tagged models use a ``Integer`` primary key.
+
+    taggit class name was TaggedItem
+
+    .. note::
+
+        Changing this class name breaks the tests. Some checks made to see what
+        was causing the error but it requires more time.
+
+    """
+
     class Meta:
         verbose_name = _("tagged item")
         verbose_name_plural = _("tagged items")
