@@ -8,8 +8,6 @@ Thank you for taking the time to contribute to django-tag-fields.
 
 Follow these guidelines to speed up the process.
 
-|
-
 Reach out before you start
 --------------------------
 
@@ -17,8 +15,6 @@ Before opening a new issue, check if somebody else has already started working
 on the same issue in the ``GitHub`` `issues
 <https://github.com/imAsparky/django-tag-fields/issues>`_ and `pull requests
 <https://github.com/imAsparky/django-tag-fields/pulls>`_.
-
-|
 
 Fork the repository
 -------------------
@@ -34,9 +30,6 @@ local development environment.
     # Change to the working directory
     cd django-tag-fields
 
-
-|
-
 Setup a virtual environment
 ---------------------------
 
@@ -45,23 +38,31 @@ Use ``venv`` or your preferred virtual environment tool.
 Install the dependencies and setup ``pre-commit``.
 
 .. code-block:: console
+    :caption: **Create a virtual environment**
 
-
-    # Create a virtual environment
     python -m venv venv
 
-    # Activate your virtual environment, if venv it will be
+
+.. code-block:: console
+    :caption: **Activate your virtual environment, if venv it will be**
+
     . venv/bin/activate
 
-    # Install dependencies
+
+.. code-block:: console
+    :caption: **Install dependencies**
+
     pip install --upgrade pip
     pip install -r requirements/test.txt
     pip install -r requirements/docs.txt
 
-    # Setup pre-commit
-    pre-commit install
+.. code-block:: console
+    :caption: **Setup pre-commit**
 
-    # Install django-tag-fields for local development.
+    pre-commit install
+.. code-block:: console
+    :caption: **Install django-tag-fields for local development**
+
     python -m pip install -e .
 
 
@@ -74,7 +75,6 @@ django-tag-fields uses `tox <https://tox.readthedocs.io/>`_ to run tests:
 
     tox
 
-|
 
 Follow style conventions (black, flake8, isort)
 -----------------------------------------------
@@ -86,8 +86,6 @@ Check that your changes are not breaking the style conventions with pre-commit.
     git add <your updated files>
 
     pre-commit
-
-|
 
 Update the documentation
 ------------------------
@@ -103,8 +101,6 @@ To make changes to the documentation, follow these steps.
 
     sphinx-build -n -W docs docs/_build
 
-|
-
 Add a changelog line
 --------------------
 
@@ -112,8 +108,6 @@ Including a changelog line, even for minor changes, is helpful, as it helps
 explain the intention behind the change and alerts users who are upgrading.
 To do this, add a line to the ``(Unreleased)`` section of the ``CHANGELOG.rst``
 file and any additional details for more complex changes.
-
-|
 
 Commit/Release process
 ----------------------
@@ -153,8 +147,6 @@ simply update your local git repo with the following command.
 
     git config --local commit.template .github/.git-commit-template.txt
 
-|
-
 .. code-block:: vim
     :caption:  Available tags for commit message.
 
@@ -187,3 +179,5 @@ It is now time to push your changes to GitHub and open a `pull request
 |
 
 Thank you for your contribution.
+
+|

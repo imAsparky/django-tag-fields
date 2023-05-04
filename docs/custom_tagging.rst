@@ -176,20 +176,21 @@ For example, ``my_food.tags.add("tag_name1", "tag_name2", tag_kwargs={"my_field"
 
         tags = TaggableManager(through=TaggedWhatever)
 
-|
 
 .. class:: TagBase
 
     .. method:: slugify(tag, i=None)
 
-        By default ``tag-fields`` uses :func:`django.utils.text.slugify` to
-        calculate a slug for a given tag.
+      The ``tag-fields`` feature uses the :func:`django.utils.text.slugify`
+      as the default method to generate a slug for a tag.
 
-        However, if you want to implement your logic, you can override this
-        method, which receives the ``tag`` (a string), and ``i``, which is
-        either ``None`` or an integer, which signifies how many times the slug
-        for this tag has been attempted to be calculated.  It is ``None`` on
-        the first attempt, and the counting begins at ``1`` thereafter.
+      But if you wish to use your logic, you can customize this process by
+      overriding the method.
+
+      The method takes in two arguments: the ``tag`` as a string and an
+      ``integer`` ``i``. If ``i`` is ``None``, it's the first attempt to
+      generate a slug for the tag, while a number greater than zero indicates
+      the number of attempts to create a unique slug.
 
 
 Using a custom tag string parser
@@ -212,19 +213,15 @@ may wish to provide your parser for various reasons e.g.
 To provide your parser, write a function that takes a tag string and returns
 a list of tag names.
 
-|
 
 For example, see a simple function to split on comma's and convert to lowercase
 below.
-
-|
 
   .. code-block:: python
 
     def comma_splitter(tag_string):
         return [t.strip().lower() for t in tag_string.split(',') if t.strip()]
 
-|
 
 To use a specific function instead of the string parser, add a new setting
 called "TAGGIT_TAGS_FROM_STRING" and provide its dotted path to your desired

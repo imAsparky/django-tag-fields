@@ -1,25 +1,29 @@
 Usage With Django Rest Framework
 ================================
 
-Because the tags in ``django-tag-fields`` need to be added into a ``TaggableManager()``
-we cannot use the usual ``Serializer`` that we get from Django REST Framework.
-Because this is trying to save the tags into a ``list``, which will throw an exception.
+To add tags into a ``TaggableManager()`` using ``django-tag-fields``, the usual
+``Serializer`` from Django REST Framework cannot be used.
 
-To accept tags through a `REST` API call we need to add the following to our ``Serializer``.
+Attempting to save the tags into a list using ``DRF Serializer`` will cause
+an exception.
+
+To enable the acceptance of tags via a REST API call, you need to add the
+following to the ``Serializer``.
 
 
 .. code-block:: python
 
     from tag_fields.serializers import (
-                                        TagListSerializerField,
-                                        TaggitSerializer,
-                                        )
+        TagSerializer,
+        TagListSerializerField,
+    )
+
 
 
     class YourSerializer(
-                          TaggitSerializer,
-                          serializers.ModelSerializer,
-                        ):
+        TagSerializer,
+        serializers.ModelSerializer,
+    ):
 
         class Meta:
             model = YourModel
@@ -29,4 +33,4 @@ To accept tags through a `REST` API call we need to add the following to our ``S
 
 
 
-And you're done, so now you can add tags to your model.
+You can now add tags to your model via a REST API call.
