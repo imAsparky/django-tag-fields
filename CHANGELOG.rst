@@ -6,6 +6,13 @@ Changelog
 
 <!--next-version-placeholder-->
 
+## v4.0.1 (2023-05-04)
+### Fix
+* **dev:** Add pre-commit to requirements #51 ([`5a27789`](https://github.com/imAsparky/django-tag-fields/commit/5a277893dd2b112fb57ac439c44c04b3f3e3183e))
+
+### Documentation
+* **all:** Update with all model changes #38 ([`0efc84b`](https://github.com/imAsparky/django-tag-fields/commit/0efc84b6b16789990a097318e58ffa92c44bf413))
+
 4.0.0 (2023-03-30)
 ~~~~~~~~~~~~~~~~~~
 * Initial release of django-tag-fields.
