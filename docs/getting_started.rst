@@ -8,7 +8,6 @@ To get started using ``django-tag-fields`` simply install it with
 
     $ pip install django-tag-fields
 
-|
 
 Add ``"tag_fields"`` to your project's ``INSTALLED_APPS`` setting and ``migrate``.
 
@@ -16,7 +15,6 @@ Add ``"tag_fields"`` to your project's ``INSTALLED_APPS`` setting and ``migrate`
 
     ./manage.py migrate
 
-|
 
 And then, to any model you want tagged, do the following.
 
@@ -31,12 +29,12 @@ And then, to any model you want tagged, do the following.
 
         tags = TaggableManager()
 
-|
 
 .. tip::
 
-    To make ``django-tag-fields`` search for existing tags in a case-insensitive
-    way, you need to modify the ``TAGGIT_CASE_INSENSITIVE`` setting.
+    To make ``django-tag-fields`` search for existing tags in a
+    case-insensitive way, you need to modify the ``TAGGIT_CASE_INSENSITIVE``
+    setting.
 
     By default, it is set to ``False``, but you can change it to ``True`` in
     your Django settings file or wherever you store your settings.
@@ -49,9 +47,8 @@ And then, to any model you want tagged, do the following.
 Settings
 --------
 
-|
-
-The following Django-level settings affect the behaviour of the library.
+You can alter ``django-tag-fields`` behaviour by changing the Django-level
+settings below.
 
 .. code-block:: python
 
@@ -62,9 +59,6 @@ The following Django-level settings affect the behaviour of the library.
   Defaults to ``False``.  When set to ``True``, tag lookups will be case
   insensitive.
   """
-
-
-|
 
 .. code-block:: python
 
