@@ -33,7 +33,9 @@ class TagList(list):
 
     def __str__(self):
         if self.pretty_print:
-            return json.dumps(self, sort_keys=True, indent=4, separators=(",", ": "))
+            return json.dumps(
+                self, sort_keys=True, indent=4, separators=(",", ": ")
+            )
         else:
             return json.dumps(self)
 
@@ -42,9 +44,10 @@ class TagListSerializerField(serializers.ListField):
     """
     A serializer field that can write out a tag list
 
-    This serializer field has some odd qualities compared to just using a ListField.
-    If this field poses problems, we should introduce a new field that is a simpler
-    ListField implementation with less features.
+    This serializer field has some odd qualities compared to just using a
+    ListField.
+    If this field poses problems, we should introduce a new field that is a
+    simpler ListField implementation with less features.
     """
 
     child = serializers.CharField()
@@ -109,7 +112,7 @@ class TagListSerializerField(serializers.ListField):
         return value
 
 
-class TaggitSerializer(serializers.Serializer):
+class TagSerializer(serializers.Serializer):
     def create(self, validated_data):
         to_be_tagged, validated_data = self._pop_tags(validated_data)
 
