@@ -4,14 +4,14 @@ from django.db import models
 
 from tag_fields.managers import TaggableManager
 from tag_fields.models import (
-    CommonGenericTaggedItemBase,
-    GenericTaggedItemBase,
-    GenericUUIDTaggedItemBase,
-    ItemBase,
+    GenericFKTaggedItemThroughBase,
+    IntegerFKTaggedItemThroughBase,
+    UUIDFKTaggedItemThroughBase,
+    ThroughTableBase,
     Tag,
     TagBase,
     TaggedItem,
-    TaggedItemBase,
+    TaggedItemThroughBase,
 )
 
 
@@ -21,12 +21,16 @@ class TestModel(models.Model):
 
 
 # Ensure that two TaggableManagers with custom through model are allowed.
-class Through1(TaggedItemBase):
-    content_object = models.ForeignKey("MultipleTags", on_delete=models.CASCADE)
+class Through1(TaggedItemThroughBase):
+    content_object = models.ForeignKey(
+        "MultipleTags", on_delete=models.CASCADE
+    )
 
 
-class Through2(TaggedItemBase):
-    content_object = models.ForeignKey("MultipleTags", on_delete=models.CASCADE)
+class Through2(TaggedItemThroughBase):
+    content_object = models.ForeignKey(
+        "MultipleTags", on_delete=models.CASCADE
+    )
 
 
 class MultipleTags(models.Model):
@@ -34,9 +38,12 @@ class MultipleTags(models.Model):
     tags2 = TaggableManager(through=Through2, related_name="tags2")
 
 
-# Ensure that two TaggableManagers with GFK via different through models are allowed.
-class ThroughGFK(GenericTaggedItemBase):
-    tag = models.ForeignKey(Tag, related_name="tagged_items", on_delete=models.CASCADE)
+# Ensure that two TaggableManagers with GFK via different through
+# models are allowed.
+class ThroughGFK(IntegerFKTaggedItemThroughBase):
+    tag = models.ForeignKey(
+        Tag, related_name="tagged_items", on_delete=models.CASCADE
+    )
 
 
 class MultipleTagsGFK(models.Model):
@@ -69,9 +76,11 @@ class BaseFood(models.Model):
         return self.name
 
 
-class MultiInheritanceLazyResolutionFoodTag(TaggedItemBase):
+class MultiInheritanceLazyResolutionFoodTag(TaggedItemThroughBase):
     content_object = models.ForeignKey(
-        "MultiInheritanceFood", related_name="tagged_items", on_delete=models.CASCADE
+        "MultiInheritanceFood",
+        related_name="tagged_items",
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -101,14 +110,14 @@ class HousePet(Pet):
 # Test direct-tagging with custom through model
 
 
-class TaggedFood(TaggedItemBase):
+class TaggedFood(TaggedItemThroughBase):
     content_object = models.ForeignKey("DirectFood", on_delete=models.CASCADE)
 
     class Meta:
         unique_together = [["content_object", "tag"]]
 
 
-class TaggedPet(TaggedItemBase):
+class TaggedPet(TaggedItemThroughBase):
     content_object = models.ForeignKey("DirectPet", on_delete=models.CASCADE)
 
 
@@ -143,8 +152,10 @@ class TrackedTag(TagBase):
     description = models.TextField(blank=True, max_length=255, null=True)
 
 
-class TaggedTrackedFood(ItemBase):
-    content_object = models.ForeignKey("DirectTrackedFood", on_delete=models.CASCADE)
+class TaggedTrackedFood(ThroughTableBase):
+    content_object = models.ForeignKey(
+        "DirectTrackedFood", on_delete=models.CASCADE
+    )
     tag = models.ForeignKey(
         TrackedTag, on_delete=models.CASCADE, related_name="%(class)s_items"
     )
@@ -155,8 +166,10 @@ class TaggedTrackedFood(ItemBase):
         unique_together = ["content_object", "tag"]
 
 
-class TaggedTrackedPet(ItemBase):
-    content_object = models.ForeignKey("DirectTrackedPet", on_delete=models.CASCADE)
+class TaggedTrackedPet(ThroughTableBase):
+    content_object = models.ForeignKey(
+        "DirectTrackedPet", on_delete=models.CASCADE
+    )
     tag = models.ForeignKey(
         TrackedTag, on_delete=models.CASCADE, related_name="%(class)s_items"
     )
@@ -189,15 +202,19 @@ class DirectTrackedHousePet(DirectTrackedPet):
 # Test custom through model to model with custom PK
 
 
-class TaggedCustomPKFood(TaggedItemBase):
-    content_object = models.ForeignKey("DirectCustomPKFood", on_delete=models.CASCADE)
+class TaggedCustomPKFood(TaggedItemThroughBase):
+    content_object = models.ForeignKey(
+        "DirectCustomPKFood", on_delete=models.CASCADE
+    )
 
     class Meta:
         unique_together = [["content_object", "tag"]]
 
 
-class TaggedCustomPKPet(TaggedItemBase):
-    content_object = models.ForeignKey("DirectCustomPKPet", on_delete=models.CASCADE)
+class TaggedCustomPKPet(TaggedItemThroughBase):
+    content_object = models.ForeignKey(
+        "DirectCustomPKPet", on_delete=models.CASCADE
+    )
 
     class Meta:
         unique_together = [["content_object", "tag"]]
@@ -225,8 +242,10 @@ class DirectCustomPKHousePet(DirectCustomPKPet):
 
 
 # Test custom through model to model with custom PK using GenericForeignKey
-class TaggedCustomPK(CommonGenericTaggedItemBase, TaggedItemBase):
-    object_id = models.CharField(max_length=50, verbose_name="Object id", db_index=True)
+class TaggedCustomPK(GenericFKTaggedItemThroughBase, TaggedItemThroughBase):
+    object_id = models.CharField(
+        max_length=50, verbose_name="Object id", db_index=True
+    )
 
     class Meta:
         unique_together = [["object_id", "tag"]]
@@ -261,7 +280,7 @@ class OfficialTag(TagBase):
     official = models.BooleanField(default=False)
 
 
-class OfficialThroughModel(GenericTaggedItemBase):
+class OfficialThroughModel(IntegerFKTaggedItemThroughBase):
     tag = models.ForeignKey(
         OfficialTag, related_name="tagged_items", on_delete=models.CASCADE
     )
@@ -367,7 +386,8 @@ class UUIDFood(models.Model):
         return self.name
 
     class Meta:
-        # With a UUIDField pk, objects are not always ordered by creation time. So explicitly set ordering.
+        # With a UUIDField pk, objects are not always ordered by creation time.
+        # So explicitly set ordering.
         ordering = ["created_at"]
 
 
@@ -382,7 +402,8 @@ class UUIDPet(models.Model):
         return self.name
 
     class Meta:
-        # With a UUIDField pk, objects are not always ordered by creation time. So explicitly set ordering.
+        # With a UUIDField pk, objects are not always ordered by creation time.
+        # So explicitly set ordering.
         ordering = ["created_at"]
 
 
@@ -394,9 +415,11 @@ class UUIDTag(TagBase):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
 
-class UUIDTaggedItem(GenericUUIDTaggedItemBase):
+class UUIDTaggedItem(UUIDFKTaggedItemThroughBase):
     tag = models.ForeignKey(
-        UUIDTag, related_name="%(app_label)s_%(class)s_items", on_delete=models.CASCADE
+        UUIDTag,
+        related_name="%(app_label)s_%(class)s_items",
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -404,8 +427,10 @@ class UUIDTaggedItem(GenericUUIDTaggedItemBase):
 
 
 # Exists to verify system check failure.
-# tests.Name.tags: (fields.E303) Reverse query name for 'Name.tags' clashes with field name 'Tag.name'.
-# 	HINT: Rename field 'Tag.name', or add/change a related_name argument to the definition for field 'Name.tags'.
+# tests.Name.tags: (fields.E303) Reverse query name for 'Name.tags' clashes
+# with field name 'Tag.name'.
+# 	HINT: Rename field 'Tag.name', or add/change a related_name argument to
+# the definition for field 'Name.tags'.
 class Name(models.Model):
     tags = TaggableManager(related_name="a_unique_related_name")
 
