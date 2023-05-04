@@ -1,13 +1,21 @@
 name: Release
 
 on:
-  # push:
-  #   tags:
-  #   - '*'
+  pull_request:
+    branches: [release]
   workflow_dispatch:
 
 jobs:
+  check_main_branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch
+        if: github.base_ref == 'release' && github.head_ref != 'main'
+        run: >
+          echo "::error You can only merge into release from main."
+          exit 1
   release:
+    needs: check_main_branch
     name: Release to PyPI
     runs-on: ubuntu-latest
     concurrency: release
