@@ -1,20 +1,33 @@
 Frequently Asked Questions
 ==========================
 
-- How can I get all my tags?
+1. How can I get all my tags?
+-----------------------------
 
- If you are using just an out-of-the-box setup, your tags are stored in the `Tag` model (found in `tag_fields.models`). If this is a custom model (for example you have your own models derived from `ItemBase`), then you'll need to query that one instead.
+To start using tags, you can access the pre-built ``Tag`` model
+in ``tag_fields.models``.
 
- So if you are using the standard setup, ``Tag.objects.all()`` will give you the tags.
+However, if you have a custom model derived
+from ``ThroughTableBase``you will need to query that instead.
 
- - How can I use this with factory_boy?
+For the standard setup, use ``Tag.objects.all()`` to retrieve all the
+available tags.
 
- Since these are all built off of many-to-many relationships, you can check out `factory_boy's documentation on this topic <https://factoryboy.readthedocs.io/en/stable/recipes.html#simple-many-to-many-relationship>`_ and get some ideas on how to deal with tags.
 
 
- One way to handle this is with post-generation hooks::
+2. How can I use this with factory_boy?
+---------------------------------------
 
-   class ProductFactory(DjangoModelFactory):
+To handle tags, refer to `factory_boy's documentation on many-to-many
+relationships <https://factoryboy.readthedocs.io/en/stable/recipes.html
+#simple-many-to-many-relationship>`_ for insights and ideas.
+
+
+One way to handle this is with post-generation hooks.
+
+.. code-block:: python
+
+    class ProductFactory(DjangoModelFactory):
         # Rest of the stuff
 
         @post_generation

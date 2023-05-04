@@ -2,16 +2,25 @@ Getting Started
 ===============
 
 To get started using ``django-tag-fields`` simply install it with
-``pip``::
+``pip``.
+
+.. code-block:: console
 
     $ pip install django-tag-fields
 
+|
 
-Add ``"tag_fields"`` to your project's ``INSTALLED_APPS`` setting.
+Add ``"tag_fields"`` to your project's ``INSTALLED_APPS`` setting and ``migrate``.
 
-Run `./manage.py migrate`.
+.. code-block:: console
 
-And then to any model you want tagging on do the following::
+    ./manage.py migrate
+
+|
+
+And then, to any model you want tagged, do the following.
+
+.. code-block:: python
 
     from django.db import models
 
@@ -22,12 +31,17 @@ And then to any model you want tagging on do the following::
 
         tags = TaggableManager()
 
-.. note::
+|
 
-    If you want ``django-tag-fields`` to be **CASE-INSENSITIVE** when looking
-    up existing tags, you'll have to set ``TAGGIT_CASE_INSENSITIVE``
-    (in ``settings.py`` or wherever you have your Django settings) to ``True``
-    (``False`` by default)::
+.. tip::
+
+    To make ``django-tag-fields`` search for existing tags in a case-insensitive
+    way, you need to modify the ``TAGGIT_CASE_INSENSITIVE`` setting.
+
+    By default, it is set to ``False``, but you can change it to ``True`` in
+    your Django settings file or wherever you store your settings.
+
+    .. code-block:: python
 
       TAGGIT_CASE_INSENSITIVE = True
 
@@ -35,18 +49,41 @@ And then to any model you want tagging on do the following::
 Settings
 --------
 
-The following Django-level settings affect the behavior of the library
+|
 
-* ``TAGGIT_CASE_INSENSITIVE``
+The following Django-level settings affect the behaviour of the library.
 
-  When set to ``True``, tag lookups will be case insensitive. This defaults to ``False``.
+.. code-block:: python
 
-* ``TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING``
-  When this is set to ``True``, tag slugs will be limited to ASCII characters. In this case, if you also have ``unidecode`` installed,
-  then tag sluggification will transform a tag like ``あい　うえお`` to ``ai-ueo``.
-  If you do not have ``unidecode`` installed, then you will usually be outright stripping unicode, meaning that something like ``helloあい`` will be slugified as ``hello``.
 
-  This value defaults to ``False``, meaning that unicode is preserved in slugification.
+  TAGGIT_CASE_INSENSITIVE
 
-  Because the behavior when ``True`` is set leads to situations where
-  slugs can be entirely stripped to an empty string, we recommend not activating this.
+  """"
+  Defaults to ``False``.  When set to ``True``, tag lookups will be case
+  insensitive.
+  """
+
+
+|
+
+.. code-block:: python
+
+  TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING
+
+  """"
+  Defaults to False.  When set to True, tag slugs will be limited to ASCII
+  characters.
+
+  If ``True`` and you also have ``unidecode`` installed,
+  then tag sluggification will transform a tag like (あい うえお) to (ai-ueo).
+
+  If ``True`` and do not have ``unidecode`` installed, then you will usually
+  be stripping Unicode, meaning that something like ``helloあい`` will be
+  slugified as ``hello``.
+  """
+
+.. caution::
+
+  The behaviour of ``TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING`` , when ``True``,
+  leads to situations where  slugs can be entirely stripped to an empty string;
+  we **dont** recommend activating this.

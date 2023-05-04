@@ -1,7 +1,6 @@
 Contributing to django-tag-fields
 =================================
 
-This project is a clone of  `Jazzband <https://github.com/jazzband/django-taggit>`_ project.
 By contributing you agree to abide by the `Contributor Code of Conduct
 <https://github.com/imAsparky/django-tag-fields/blob/main/CODE_OF_CONDUCT.md>`_.
 
@@ -9,25 +8,62 @@ Thank you for taking the time to contribute to django-tag-fields.
 
 Follow these guidelines to speed up the process.
 
+|
+
 Reach out before you start
 --------------------------
 
-Before opening a new issue, look if somebody else has already started working
-on the same issue in the `GitHub issues
+Before opening a new issue, check if somebody else has already started working
+on the same issue in the ``GitHub`` `issues
 <https://github.com/imAsparky/django-tag-fields/issues>`_ and `pull requests
 <https://github.com/imAsparky/django-tag-fields/pulls>`_.
+
+|
 
 Fork the repository
 -------------------
 
-Once you have forked this repository to your own GitHub account, install your
-own fork in your development environment:
+After forking this repository to your GitHub account, install your fork in your
+local development environment.
 
 .. code-block:: console
 
+    # Clone your forked repository
     git clone git@github.com:<your_fork>/django-tag-fields.git
+
+    # Change to the working directory
     cd django-tag-fields
+
+
+|
+
+Setup a virtual environment
+---------------------------
+
+Use ``venv`` or your preferred virtual environment tool.
+
+Install the dependencies and setup ``pre-commit``.
+
+.. code-block:: console
+
+
+    # Create a virtual environment
+    python -m venv venv
+
+    # Activate your virtual environment, if venv it will be
+    . venv/bin/activate
+
+    # Install dependencies
+    pip install --upgrade pip
+    pip install -r requirements/test.txt
+    pip install -r requirements/docs.txt
+
+    # Setup pre-commit
+    pre-commit install
+
+    # Install django-tag-fields for local development.
     python -m pip install -e .
+
 
 Running tests
 -------------
@@ -38,53 +74,56 @@ django-tag-fields uses `tox <https://tox.readthedocs.io/>`_ to run tests:
 
     tox
 
+|
+
 Follow style conventions (black, flake8, isort)
 -----------------------------------------------
 
-Check that your changes are not breaking the style conventions with:
+Check that your changes are not breaking the style conventions with pre-commit.
 
 .. code-block:: console
 
-    tox -e black,flake8,isort
+    git add <your updated files>
+
+    pre-commit
+
+|
 
 Update the documentation
 ------------------------
 
-If you introduce new features or change existing documented behavior, please
-remember to update the documentation.
+When adding new features or modifying documented behaviour, it is important
+to remember to update the corresponding documentation.
 
-The documentation is located in the ``docs`` directory of the repository.
+You can find the documentation in the "docs" directory of the repository.
 
-To do work on the docs, proceed with the following steps:
+To make changes to the documentation, follow these steps.
 
 .. code-block:: console
 
-    pip install -r requirements/docs.txt
     sphinx-build -n -W docs docs/_build
+
+|
 
 Add a changelog line
 --------------------
 
-Even when the change is minor, a changelog line is helpful to both describe
-the intent of the change, and to give a heads up to people upgrading. You can
-add a line in the ``(Unreleased)`` section of ``CHANGELOG.rst``, along with
-any more detailed explanations for more complicated changes.
+Including a changelog line, even for minor changes, is helpful, as it helps
+explain the intention behind the change and alerts users who are upgrading.
+To do this, add a line to the ``(Unreleased)`` section of the ``CHANGELOG.rst``
+file and any additional details for more complex changes.
 
-Send pull request
------------------
-
-It is now time to push your changes to GitHub and open a `pull request
-<https://github.com/imAsparky/django-tag-fields/pulls>`_!
-
+|
 
 Commit/Release process
 ----------------------
 
-Releases are handled by `python-semantic-release <https://python-semantic-release.readthedocs.io/en/latest/>`_.
+Releases are handled by `python-semantic-release <https://python-semantic-
+release.readthedocs.io/en/latest/>`_.
 
 .. caution::
 
-    Its important that you DO NOT change the version numbers in the code.
+    Its important that you **DO NOT** change the version numbers in the code.
     This will confuse the automatic release updating.
 
 For automatic releases to operate correctly its important to follow the
@@ -93,14 +132,12 @@ For automatic releases to operate correctly its important to follow the
 Conventional commits provides a nice easy to read format in the repository and helps to
 find relevent commit information with a quick scan.
 
-|
-
 .. code-block:: vim
     :caption: TLDR: Example of commit message with issue number.
 
     docs(Contrib): Update README typos #42
 
-    Long description of commit if needed.
+    # Long description of commit if needed.
 
     closes #42
 
@@ -126,7 +163,7 @@ simply update your local git repo with the following command.
     # **   chore    (a chore that needs to be done)
     #      dbg      (changes in debugging code/frameworks; no production code change)
     #      defaults (changes default options)
-    # **   docs      (changes to documentation)
+    # **   docs     (changes to documentation)
     # **   feat     (new feature)
     # **   fix      (bug fix)
     #      hack     (temporary fix to make things move forward; please avoid it)
@@ -139,3 +176,14 @@ simply update your local git repo with the following command.
     #      WIP      (Work In Progress; for intermediate commits to keep patches reasonably sized)
     #      jsrXXX   (patches related to the implementation of jsrXXX, where XXX the JSR number)
     #      jdkX     (patches related to supporting jdkX as the host VM, where X the JDK version)
+
+
+Send pull request
+-----------------
+
+It is now time to push your changes to GitHub and open a `pull request
+<https://github.com/imAsparky/django-tag-fields/pulls>`_!
+
+|
+
+Thank you for your contribution.
