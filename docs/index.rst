@@ -1,12 +1,13 @@
 Welcome to django-tag-fields's documentation!
 =============================================
 
+This project is a hard clone of  `Jazzband django-taggit
+<https://github.com/jazzband/django-taggit>`_.
+
 ``django-tag-fields`` is a reusable Django application designed to make adding
 tagging to your project easy and fun.
 
-``django-tag-fields`` has been hard cloned from django-taggit.
-
-``django-tag-fields V4.0.0`` continues to work as django-taggit==3.1.0
+``django-tag-fields V4.0.0`` continues to work as django-taggit==3.1.0.
 
 
 ``django-tag-fields`` works with Django 3.2+ and Python 3.6+.
