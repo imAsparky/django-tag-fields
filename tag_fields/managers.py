@@ -42,6 +42,25 @@ class ExtraJoinRestriction:
         self.content_types = content_types
 
     def as_sql(self, compiler, connection):
+        """
+        Returns content_types and a string/list of  Join Restrictions.
+
+        Paramaters
+        ==========
+
+        :param compiler: A bandle to :class:`django.db.models.sql.compiler.SQLCompiler` # noqa: E501
+        :type compiler: class:`django.db.models.sql.compiler.SQLCompiler`
+
+        :param connection: todo
+        :type connection: todo
+
+        :return: String is in the format `'alias.col = %s'` for one
+            content_type or 'alias.col IN (%s%s%s)' for multiple content types.
+        :rtype: str
+
+        :return content_types: A string or list of content types
+        :rtype: str or [str,str, ...]
+        """
         qn = compiler.quote_name_unless_alias
         if len(self.content_types) == 1:
             extra_where = f"{qn(self.alias)}.{qn(self.col)} = %s"
@@ -61,8 +80,34 @@ class ExtraJoinRestriction:
 
 
 class _TaggableManager(models.Manager):
-    # TODO investigate whether we can use a RelatedManager instead of all this
-    # stuff to take advantage of all the Django goodness
+    """
+    Base class for Taggable Manager.
+
+    Paramaters
+    ==========
+
+    :param through: The name of the django through table
+    :type through: str
+
+    :param model: The namen of the model for the Taggable manager
+    :type model: str
+
+    :param instance: Instance for the Taggable manager
+    :type instance: class:`models.Model`
+
+    :param prefetch_cache_name: todo
+    :type prefetch_cache_name: todo
+
+    :param ordering: todo
+    :type ordering: todo
+
+    .. todo::
+        Very old todo here.
+
+        Investigate whether we can use a RelatedManager instead of all this
+        stuff to take advantage of all the Django goodness
+    """
+
     def __init__(
         self,
         through,
@@ -96,6 +141,21 @@ class _TaggableManager(models.Manager):
             ).order_by(*self.ordering)
 
     def get_prefetch_queryset(self, instances, queryset=None):
+        """
+        Overrides get_prefetch_queryset.
+
+        Paramaters
+        ==========
+
+        :param instance: Instance for Self
+        :type instance: class:`models.Model`
+
+        :param queryset: A django queryset, Should be None and will raise an
+            error if supplied.
+        :type queryset: todo
+
+        :raises ValueError: Custom queryset can't be used for this lookup.
+        """
         if queryset is not None:
             raise ValueError("Custom queryset can't be used for this lookup.")
 
@@ -164,6 +224,30 @@ class _TaggableManager(models.Manager):
 
     @require_instance_manager
     def add(self, *tags, through_defaults=None, tag_kwargs=None, **kwargs):
+        """
+        Add tags to an object using either ``Tag`` instances or strings.
+
+        Paramaters
+        ==========
+
+        :param tags: A list of tags to get or create.
+        :type tags: List  [str,str,str ...]
+
+        :param through_defaults: You can specify values for your custom through
+            model by providing an argument if necessary.
+
+        :param tag_kwargs: TDefault: None his enables users to set specific
+            parameters for the tags.
+        :type tag_kwargs: dict, optional
+
+        .. todo::
+
+            Check if hardcode 'tag_id' in ``vals`` or should the column name be
+            got dynamically from somewhere?
+
+            Old todo, see vals below.
+        """
+
         self._remove_prefetched_objects()
         if tag_kwargs is None:
             tag_kwargs = {}
@@ -441,6 +525,40 @@ class _TaggableManager(models.Manager):
 
 
 class TaggableManager(RelatedField):
+    """
+    Manager for handling the actions required on Tags.
+
+    Paramaters
+    ==========
+
+    :param blank: Default: False Determines if the field is required
+    :type blank: bool, optional
+
+    :param help_text: Default: _("A comma-separated list of tags.") The help
+        text that should be used in forms, including the admin.
+    :type help_text: str, optional
+
+    :param manager: Default: :class:`managers._TaggableManager` The Taggable
+        manager to use for this instance.
+    :type manager:
+
+    :param ordering: Default: None
+    :type ordering: todo, optional
+
+    :param related_name:
+    :type related_name: str, optional
+
+     :param through: Default: None The through table model, see
+        :doc:`custom_tagging` for more information.
+    :type through: str, optional
+
+    :param to: Default: None
+    :type to: todo, optional
+
+    :param verbose_name: Default: _("Tags") This field's verbose name.
+    :type verbose_name: str, optional
+    """
+
     # Field flags
     many_to_many = True
     many_to_one = False
@@ -480,6 +598,16 @@ class TaggableManager(RelatedField):
         self.manager = manager
 
     def __get__(self, instance, model):
+        """
+        Check the instance has a primary key.
+
+        :raises ValueError: "%s objects need to have a primary key value "
+                "before you can access their tags." % model.__name__
+
+        :return: An instance of the default manager.
+        :rtype: :class:`managers._TaggableManager`
+        """
+
         if instance is not None and instance.pk is None:
             raise ValueError(
                 "%s objects need to have a primary key value "
@@ -732,7 +860,8 @@ class TaggableManager(RelatedField):
 
     def get_joining_columns(self, reverse_join=False):
         # RemovedInDjango60Warning
-        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d
+        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d # noqa: E501
+        # Use "get_joining_fields() instead."
         if reverse_join:
             return ((self.model._meta.pk.column, "object_id"),)
         else:
@@ -776,7 +905,8 @@ class TaggableManager(RelatedField):
 
     def get_reverse_joining_columns(self):
         # RemovedInDjango60Warning
-        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d
+        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d # noqa: E501
+        # Use "get_reverse_joining_fields() instead."
         return self.get_joining_columns(reverse_join=True)
 
     def get_reverse_joining_fields(self):

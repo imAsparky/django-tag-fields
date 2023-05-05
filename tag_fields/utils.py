@@ -117,10 +117,19 @@ def _edit_string_for_tags(tags):
 
 
 def require_instance_manager(func):
+    """
+    Checks the instance exists.
+
+    :raises TypeError: "Can't call %s with a non-instance manager" % func.__name__ # noqa: E501
+
+    """
+
     @wraps(func)
     def inner(self, *args, **kwargs):
         if self.instance is None:
-            raise TypeError("Can't call %s with a non-instance manager" % func.__name__)
+            raise TypeError(
+                "Can't call %s with a non-instance manager" % func.__name__
+            )
         return func(self, *args, **kwargs)
 
     return inner
