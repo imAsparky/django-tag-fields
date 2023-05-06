@@ -809,21 +809,21 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
                 connection.queries[-2:],
             )
 
-    @override_settings(TAGGIT_CASE_INSENSITIVE=True)
+    @override_settings(TAGS_CASE_INSENSITIVE=True)
     def test_with_case_insensitive_option(self):
         spain = self.tag_model.objects.create(name="Spain", slug="spain")
         orange = self.food_model.objects.create(name="orange")
         orange.tags.add("spain")
         self.assertEqual(list(orange.tags.all()), [spain])
 
-    @override_settings(TAGGIT_CASE_INSENSITIVE=True)
+    @override_settings(TAGS_CASE_INSENSITIVE=True)
     def test_with_case_insensitive_option_and_creation(self):
         orange = self.food_model.objects.create(name="orange")
         orange.tags.add("spain", "Spain")
         tag_names = list(orange.tags.names())
         self.assertEqual(len(tag_names), 1, tag_names)
 
-    @override_settings(TAGGIT_CASE_INSENSITIVE=True)
+    @override_settings(TAGS_CASE_INSENSITIVE=True)
     def test_with_case_insensitive_option_new_and_old(self):
         orange = self.food_model.objects.create(name="orange")
         orange.tags.add("Spain")
@@ -1320,7 +1320,7 @@ class TagStringParseTestCase(SimpleTestCase):
         )
 
     @override_settings(
-        TAGGIT_TAGS_FROM_STRING="tests.custom_parser.comma_splitter"
+        TAGS_GET_TAGS_FROM_STRING="tests.custom_parser.comma_splitter"
     )
     def test_custom_comma_splitter(self):
         self.assertEqual(parse_tags("   Cued Speech "), ["Cued Speech"])
@@ -1332,7 +1332,7 @@ class TagStringParseTestCase(SimpleTestCase):
         )
 
     @override_settings(
-        TAGGIT_STRING_FROM_TAGS="tests.custom_parser.comma_joiner"
+        TAGS_GET_STRING_FROM_TAGS="tests.custom_parser.comma_joiner"
     )
     def test_custom_comma_joiner(self):
         a = Tag(name="Cued Speech")
