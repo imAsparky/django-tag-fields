@@ -13,7 +13,9 @@ def _test_parse_tags(tagstring):
         raise ValueError()
 
 
-@override_settings(TAGGIT_TAGS_FROM_STRING="tests.test_forms._test_parse_tags")
+@override_settings(
+    TAGS_GET_TAGS_FROM_STRING="tests.test_forms._test_parse_tags"
+)
 class TagFieldTests(TestCase):
     def test_should_return_error_on_clean_if_not_comma_separated(self):
         class TestForm(forms.Form):
