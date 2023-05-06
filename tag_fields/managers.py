@@ -313,7 +313,7 @@ class _TaggableManager(models.Manager):
                     )
                 )
 
-        case_insensitive = getattr(settings, "TAGGIT_CASE_INSENSITIVE", False)
+        case_insensitive = getattr(settings, "TAGS_CASE_INSENSITIVE", False)
         manager = self.through.tag_model()._default_manager.using(db)
 
         if case_insensitive:

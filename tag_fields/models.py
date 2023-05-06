@@ -79,7 +79,7 @@ class TagBase(models.Model):
             return super().save(*args, **kwargs)
 
     def slugify(self, tag, i=None):
-        if getattr(settings, "TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING", False):
+        if getattr(settings, "TAGS_STRIP_UNICODE_WHEN_SLUGIFYING", False):
             slug = slugify(unidecode(tag))
         else:
             slug = slugify(tag, allow_unicode=True)
