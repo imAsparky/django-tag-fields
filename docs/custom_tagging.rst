@@ -224,14 +224,14 @@ below.
 
 
 To use a specific function instead of the string parser, add a new setting
-called "TAGGIT_TAGS_FROM_STRING" and provide its dotted path to your desired
+called "TAGS_GET_TAGS_FROM_STRING" and provide its dotted path to your desired
 function.
 
 
 You can also offer a function that transforms a collection of tags into a
 string format. To change the default value
 (which is "tag_fields.utils._edit_string_for_tags"), use the
-"TAGGIT_STRING_FROM_TAGS" setting.
+"TAGS_GET_STRING_FROM_TAGS" setting.
 
   .. code-block:: python
 
@@ -243,5 +243,5 @@ project's settings.py file should include the following.
 
   .. code-block:: python
 
-    TAGGIT_TAGS_FROM_STRING = 'appname.utils.comma_splitter'
-    TAGGIT_STRING_FROM_TAGS = 'appname.utils.comma_joiner'
+    TAGS_GET_TAGS_FROM_STRING = 'appname.utils.comma_splitter'
+    TAGS_GET_STRING_FROM_TAGS = 'appname.utils.comma_joiner'
