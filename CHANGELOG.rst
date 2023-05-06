@@ -48,7 +48,7 @@ of renaming.
   enhanced unicode-compatible slug.
 
   If you wish to maintain the old stripping behavior, set the setting
-  ``TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING`` to ``True``.
+  ``TAGS_STRIP_UNICODE_WHEN_SLUGIFYING`` to ``True``.
 
   As a reminder, custom tag models can easily customize slugification behavior by overriding
   the ``slugify`` method to your business needs.
