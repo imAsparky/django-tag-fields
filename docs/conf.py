@@ -5,7 +5,7 @@ master_doc = "index"
 project = "django-tag-fields"
 copyright = "Alex Gaynor, Mark Sevelj and individual contributors."
 
-__version__ = "4.0.1"
+__version__ = "4.0.2"
 # The full version, including alpha/beta/rc tags.
 release = __version__
 

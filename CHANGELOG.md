@@ -4,6 +4,16 @@
 
 <!--next-version-placeholder-->
 
+## v4.0.2 (2023-05-06)
+### Fix
+* **settings:** Update Constant names #59 ([`c2a9b3a`](https://github.com/imAsparky/django-tag-fields/commit/c2a9b3ab5047023464ff4a032f2eafce68c7d06b))
+
+### Documentation
+* **settings:** Update Constant names #59 ([`1395043`](https://github.com/imAsparky/django-tag-fields/commit/13950430a4300365259f5e99c560f70c29069fca))
+* **manager:** Add docstrings to select areas #57 ([`d524d44`](https://github.com/imAsparky/django-tag-fields/commit/d524d44ba99f4214ba05080903997593d6c6849f))
+* **changelog:** Change .rst to .md #55 ([`5b5b6d9`](https://github.com/imAsparky/django-tag-fields/commit/5b5b6d9414a801cf9888440a9b388157fe164ad9))
+* **typo:** Improve wording and layout #53 ([`0970e28`](https://github.com/imAsparky/django-tag-fields/commit/0970e28d52e37a6c25962c3a6d000bd857306281))
+
 ## v4.0.1 (2023-05-04)
 
 ### Fix
