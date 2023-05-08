@@ -5,12 +5,7 @@ Frequently Asked Questions
 -----------------------------
 
 To start using tags, you can access the pre-built ``Tag`` model
-in ``tag_fields.models``.
-
-However, if you have a custom model derived
-from ``ThroughTableBase``you will need to query that instead.
-
-For the standard setup, use ``Tag.objects.all()`` to retrieve all the
+in ``tag_fields.models``.  However, if you have a custom model derived from ``ThroughTableBase``you will need to query that instead.  For the standard setup, use ``Tag.objects.all()`` to retrieve all the
 available tags.
 
 
