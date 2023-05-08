@@ -1,3 +1,8 @@
+.. django-tag-fields documentation master file, created by
+   sphinx-quickstart on Mon May  8 08:43:15 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
 Welcome to django-tag-fields's documentation!
 =============================================
 
@@ -12,8 +17,10 @@ tagging to your project easy and fun.
 
 ``django-tag-fields`` works with Django 3.2+ and Python 3.6+.
 
+
 .. toctree::
    :maxdepth: 2
+   :caption: Contents:
 
    getting_started
    forms
@@ -25,6 +32,8 @@ tagging to your project easy and fun.
    contributing
    external_apps
    changelog
+
+
 
 Indices and tables
 ==================
