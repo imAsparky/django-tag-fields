@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from tag_fields.forms import TagField
-from tag_fields.models import Tag
+from tag_fields.models import ModelTag
 
 
 def _test_parse_tags(tagstring):
@@ -41,7 +41,9 @@ class TagFieldTests(TestCase):
         class TestForm(forms.Form):
             tag = TagField()
 
-        form = TestForm(initial={"tag": [Tag(name="a")]}, data={"tag": ["b"]})
+        form = TestForm(
+            initial={"tag": [ModelTag(name="a")]}, data={"tag": ["b"]}
+        )
 
         self.assertTrue(form.has_changed())
 
@@ -50,7 +52,8 @@ class TagFieldTests(TestCase):
             tag = TagField()
 
         form = TestForm(
-            initial={"tag": [Tag(name="foo-bar")]}, data={"tag": ["foo-bar"]}
+            initial={"tag": [ModelTag(name="foo-bar")]},
+            data={"tag": ["foo-bar"]},
         )
 
         self.assertFalse(form.has_changed())

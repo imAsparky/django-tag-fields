@@ -2,22 +2,22 @@ import uuid
 
 from django.db import models
 
-from tag_fields.managers import TaggableManager
+from tag_fields.managers import ModelTagsManager
 from tag_fields.models import (
     GenericFKTaggedItemThroughBase,
     IntegerFKTaggedItemThroughBase,
     UUIDFKTaggedItemThroughBase,
     ThroughTableBase,
-    Tag,
+    ModelTag,
     TagBase,
-    TaggedItem,
+    ModelTagIntFk,
     TaggedItemThroughBase,
 )
 
 
 # base test model
 class TestModel(models.Model):
-    tags = TaggableManager()
+    tags = ModelTagsManager()
 
 
 # Ensure that two TaggableManagers with custom through model are allowed.
@@ -34,27 +34,27 @@ class Through2(TaggedItemThroughBase):
 
 
 class MultipleTags(models.Model):
-    tags1 = TaggableManager(through=Through1, related_name="tags1")
-    tags2 = TaggableManager(through=Through2, related_name="tags2")
+    tags1 = ModelTagsManager(through=Through1, related_name="tags1")
+    tags2 = ModelTagsManager(through=Through2, related_name="tags2")
 
 
 # Ensure that two TaggableManagers with GFK via different through
 # models are allowed.
 class ThroughGFK(IntegerFKTaggedItemThroughBase):
     tag = models.ForeignKey(
-        Tag, related_name="tagged_items", on_delete=models.CASCADE
+        ModelTag, related_name="tagged_items", on_delete=models.CASCADE
     )
 
 
 class MultipleTagsGFK(models.Model):
-    tags1 = TaggableManager(related_name="tagsgfk1")
-    tags2 = TaggableManager(through=ThroughGFK, related_name="tagsgfk2")
+    tags1 = ModelTagsManager(related_name="tagsgfk1")
+    tags2 = ModelTagsManager(through=ThroughGFK, related_name="tagsgfk2")
 
 
 class BlankTagModel(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(blank=True)
+    tags = ModelTagsManager(blank=True)
 
     def __str__(self):
         return self.name
@@ -63,7 +63,7 @@ class BlankTagModel(models.Model):
 class Food(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager()
+    tags = ModelTagsManager()
 
     def __str__(self):
         return self.name
@@ -88,7 +88,7 @@ class MultiInheritanceLazyResolutionFoodTag(TaggedItemThroughBase):
 
 
 class MultiInheritanceFood(BaseFood):
-    tags = TaggableManager(through=MultiInheritanceLazyResolutionFoodTag)
+    tags = ModelTagsManager(through=MultiInheritanceLazyResolutionFoodTag)
 
     def __str__(self):
         return self.name
@@ -97,7 +97,7 @@ class MultiInheritanceFood(BaseFood):
 class Pet(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager()
+    tags = ModelTagsManager()
 
     def __str__(self):
         return self.name
@@ -124,7 +124,7 @@ class TaggedPet(TaggedItemThroughBase):
 class DirectFood(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through="TaggedFood")
+    tags = ModelTagsManager(through="TaggedFood")
 
     def __str__(self):
         return self.name
@@ -133,7 +133,7 @@ class DirectFood(models.Model):
 class DirectPet(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through=TaggedPet)
+    tags = ModelTagsManager(through=TaggedPet)
 
     def __str__(self):
         return self.name
@@ -180,7 +180,7 @@ class TaggedTrackedPet(ThroughTableBase):
 class DirectTrackedFood(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through=TaggedTrackedFood)
+    tags = ModelTagsManager(through=TaggedTrackedFood)
 
     def __str__(self):
         return self.name
@@ -189,7 +189,7 @@ class DirectTrackedFood(models.Model):
 class DirectTrackedPet(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through=TaggedTrackedPet)
+    tags = ModelTagsManager(through=TaggedTrackedPet)
 
     def __str__(self):
         return self.name
@@ -222,7 +222,7 @@ class TaggedCustomPKPet(TaggedItemThroughBase):
 
 class DirectCustomPKFood(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
-    tags = TaggableManager(through=TaggedCustomPKFood)
+    tags = ModelTagsManager(through=TaggedCustomPKFood)
 
     def __str__(self):
         return self.name
@@ -231,7 +231,7 @@ class DirectCustomPKFood(models.Model):
 class DirectCustomPKPet(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    tags = TaggableManager(through=TaggedCustomPKPet)
+    tags = ModelTagsManager(through=TaggedCustomPKPet)
 
     def __str__(self):
         return self.name
@@ -254,7 +254,7 @@ class TaggedCustomPK(GenericFKTaggedItemThroughBase, TaggedItemThroughBase):
 class CustomPKFood(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    tags = TaggableManager(through=TaggedCustomPK)
+    tags = ModelTagsManager(through=TaggedCustomPK)
 
     def __str__(self):
         return self.name
@@ -263,7 +263,7 @@ class CustomPKFood(models.Model):
 class CustomPKPet(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    tags = TaggableManager(through=TaggedCustomPK)
+    tags = ModelTagsManager(through=TaggedCustomPK)
 
     def __str__(self):
         return self.name
@@ -293,7 +293,7 @@ class OfficialThroughModel(IntegerFKTaggedItemThroughBase):
 class OfficialFood(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through=OfficialThroughModel)
+    tags = ModelTagsManager(through=OfficialThroughModel)
 
     def __str__(self):
         return self.name
@@ -302,7 +302,7 @@ class OfficialFood(models.Model):
 class OfficialPet(models.Model):
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through=OfficialThroughModel)
+    tags = ModelTagsManager(through=OfficialThroughModel)
 
     def __str__(self):
         return self.name
@@ -313,7 +313,7 @@ class OfficialHousePet(OfficialPet):
 
 
 class Media(models.Model):
-    tags = TaggableManager()
+    tags = ModelTagsManager()
 
     class Meta:
         abstract = True
@@ -332,7 +332,7 @@ class ProxyPhoto(Photo):
         proxy = True
 
 
-class ArticleTag(Tag):
+class ArticleTag(ModelTag):
     class Meta:
         proxy = True
 
@@ -344,7 +344,7 @@ class ArticleTag(Tag):
         return slug
 
 
-class ArticleTaggedItem(TaggedItem):
+class ArticleTaggedItem(ModelTagIntFk):
     class Meta:
         proxy = True
 
@@ -356,7 +356,7 @@ class ArticleTaggedItem(TaggedItem):
 class Article(models.Model):
     title = models.CharField(max_length=100)
 
-    tags = TaggableManager(through=ArticleTaggedItem)
+    tags = ModelTagsManager(through=ArticleTaggedItem)
 
 
 class CustomManager(models.Model):
@@ -364,11 +364,11 @@ class CustomManager(models.Model):
         def __init__(*args, **kwargs):
             pass
 
-    tags = TaggableManager(manager=Foo)
+    tags = ModelTagsManager(manager=Foo)
 
 
 class Parent(models.Model):
-    tags = TaggableManager()
+    tags = ModelTagsManager()
 
 
 class Child(Parent):
@@ -378,7 +378,7 @@ class Child(Parent):
 class UUIDFood(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
-    tags = TaggableManager(through="UUIDTaggedItem")
+    tags = ModelTagsManager(through="UUIDTaggedItem")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -395,7 +395,7 @@ class UUIDPet(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
 
-    tags = TaggableManager(through="UUIDTaggedItem")
+    tags = ModelTagsManager(through="UUIDTaggedItem")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -432,8 +432,8 @@ class UUIDTaggedItem(UUIDFKTaggedItemThroughBase):
 # 	HINT: Rename field 'Tag.name', or add/change a related_name argument to
 # the definition for field 'Name.tags'.
 class Name(models.Model):
-    tags = TaggableManager(related_name="a_unique_related_name")
+    tags = ModelTagsManager(related_name="a_unique_related_name")
 
 
 class OrderedModel(models.Model):
-    tags = TaggableManager(ordering=["name"])
+    tags = ModelTagsManager(ordering=["name"])
