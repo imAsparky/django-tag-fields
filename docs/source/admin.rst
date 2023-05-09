@@ -1,12 +1,12 @@
 Using tags in the admin
 =======================
 
-By default if you have a :class:`TaggableManager` on your model it will show up
+By default if you have a :class:`ModelTagsManager` on your model it will show up
 in the admin, just as it will in any other form.
 
 If you are specifying :attr:`ModelAdmin.fieldsets
 <django.contrib.admin.ModelAdmin.fieldsets>`, include the name of the
-:class:`TaggableManager` as a field::
+:class:`ModelTagsManager` as a field::
 
     fieldsets = (
         (None, {'fields': ('tags',)}),
@@ -16,7 +16,7 @@ Including tags in ``ModelAdmin.list_display``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 One important thing to note is that you *cannot* include a
-:class:`TaggableManager` in :attr:`ModelAdmin.list_display
+:class:`ModelTagsManager` in :attr:`ModelAdmin.list_display
 <django.contrib.admin.ModelAdmin.list_display>`. If you do you'll see an
 exception that looks like::
 
