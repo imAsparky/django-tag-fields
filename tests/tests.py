@@ -12,8 +12,8 @@ from django.db import IntegrityError, connection, models
 from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
-from tag_fields.managers import TaggableManager, _TaggableManager
-from tag_fields.models import Tag, TaggedItem
+from tag_fields.managers import ModelTagsManager, _TaggableManager
+from tag_fields.models import ModelTag, ModelTagIntFk
 from tag_fields.utils import edit_string_for_tags, parse_tags
 from tag_fields.views import tagged_object_list
 
@@ -79,7 +79,7 @@ class BaseTaggingTestCase(TestCase):
 
 class TagModelTestCase(BaseTaggingTestCase):
     food_model = Food
-    tag_model = Tag
+    tag_model = ModelTag
 
     def test_unique_slug(self):
         apple = self.food_model.objects.create(name="apple")
@@ -146,17 +146,17 @@ class CustomTagCreationTestCase(TestCase):
 
 class TagModelDirectTestCase(TagModelTestCase):
     food_model = DirectFood
-    tag_model = Tag
+    tag_model = ModelTag
 
 
 class TagModelDirectCustomPKTestCase(TagModelTestCase):
     food_model = DirectCustomPKFood
-    tag_model = Tag
+    tag_model = ModelTag
 
 
 class TagModelCustomPKTestCase(TagModelTestCase):
     food_model = CustomPKFood
-    tag_model = Tag
+    tag_model = ModelTag
 
 
 class TagModelOfficialTestCase(TagModelTestCase):
@@ -174,8 +174,8 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
     multi_inheritance_food_model = MultiInheritanceFood
     pet_model = Pet
     housepet_model = HousePet
-    taggeditem_model = TaggedItem
-    tag_model = Tag
+    taggeditem_model = ModelTagIntFk
+    tag_model = ModelTag
 
     def setUp(self):
         super().setUp()
@@ -792,7 +792,7 @@ class TaggableManagerTestCase(BaseTaggingTestCase):
 
     def test_internal_type_is_manytomany(self):
         self.assertEqual(
-            TaggableManager().get_internal_type(), "ManyToManyField"
+            ModelTagsManager().get_internal_type(), "ManyToManyField"
         )
 
     def test_prefetch_no_extra_join(self):
@@ -1099,7 +1099,7 @@ class TaggableFormTestCase(BaseTaggingTestCase):
             )
 
     def test_formfield(self):
-        tm = TaggableManager(
+        tm = ModelTagsManager(
             verbose_name="categories",
             help_text="Add some categories",
             blank=True,
@@ -1111,7 +1111,7 @@ class TaggableFormTestCase(BaseTaggingTestCase):
 
         self.assertEqual(ff.clean(""), [])
 
-        tm = TaggableManager()
+        tm = ModelTagsManager()
         ff = tm.formfield()
         self.assertRaises(ValidationError, ff.clean, "")
 
@@ -1301,9 +1301,9 @@ class TagStringParseTestCase(SimpleTestCase):
         )
 
     def test_recreation_of_tag_list_string_representations(self):
-        plain = Tag(name="plain")
-        spaces = Tag(name="spa ces")
-        comma = Tag(name="com,ma")
+        plain = ModelTag(name="plain")
+        spaces = ModelTag(name="spa ces")
+        comma = ModelTag(name="com,ma")
         self.assertEqual(edit_string_for_tags([plain]), "plain")
         self.assertEqual(
             edit_string_for_tags([plain, spaces]), '"spa ces", plain'
@@ -1335,8 +1335,8 @@ class TagStringParseTestCase(SimpleTestCase):
         TAGS_GET_STRING_FROM_TAGS="tests.custom_parser.comma_joiner"
     )
     def test_custom_comma_joiner(self):
-        a = Tag(name="Cued Speech")
-        b = Tag(name="transliterator")
+        a = ModelTag(name="Cued Speech")
+        b = ModelTag(name="transliterator")
         self.assertEqual(
             edit_string_for_tags([a, b]), "Cued Speech, transliterator"
         )
@@ -1344,9 +1344,11 @@ class TagStringParseTestCase(SimpleTestCase):
 
 class DeconstructTestCase(SimpleTestCase):
     def test_deconstruct_kwargs_kept(self):
-        instance = TaggableManager(through=OfficialThroughModel, to="dummy.To")
+        instance = ModelTagsManager(
+            through=OfficialThroughModel, to="dummy.To"
+        )
         name, path, args, kwargs = instance.deconstruct()
-        new_instance = TaggableManager(*args, **kwargs)
+        new_instance = ModelTagsManager(*args, **kwargs)
         self.assertEqual(
             "tests.OfficialThroughModel", new_instance.remote_field.through
         )
@@ -1405,13 +1407,13 @@ class RelatedNameTests(TestCase):
     def test_default_related_name(self):
         food = Food.objects.create(name="apple")
         food.tags.add("green")
-        tag = Tag.objects.get(food=food.pk)
+        tag = ModelTag.objects.get(food=food.pk)
         self.assertEqual(tag.name, "green")
 
     def test_custom_related_name(self):
         name = Name.objects.create()
         name.tags.add("foo")
-        tag = Tag.objects.get(a_unique_related_name=name.pk)
+        tag = ModelTag.objects.get(a_unique_related_name=name.pk)
         self.assertEqual(tag.name, "foo")
 
 
