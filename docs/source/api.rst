@@ -1,10 +1,10 @@
 The API
 =======
 
-After you've got your ``TaggableManager`` added to your model you can start
+After you've got your ``ModelTagsManager`` added to your model you can start
 playing around with the API.
 
-.. class:: TaggableManager([verbose_name="Tags", help_text="A comma-separated list of tags.", through=None, blank=False])
+.. class:: ModelTagsManager([verbose_name="Tags", help_text="A comma-separated list of tags.", through=None, blank=False])
 
     :param verbose_name: The verbose_name for this field.
     :param help_text: The help_text to be used in forms (including the admin).
@@ -85,19 +85,19 @@ playing around with the API.
     .. hint::
 
        You can subclass ``_TaggableManager`` (note the underscore) to add
-       methods or functionality. ``TaggableManager`` takes an optional
+       methods or functionality. ``ModelTagsManager`` takes an optional
        manager keyword argument for your custom class, like this::
 
           class Food(models.Model):
               # ... fields here
-              tags = TaggableManager(manager=_CustomTaggableManager)
+              tags = ModelTagsManager(manager=_CustomTaggableManager)
 
 Filtering
 ~~~~~~~~~
 
 To find all of a model with a specific tags you can filter, using the normal
 Django ORM API.  For example if you had a ``Food`` model, whose
-``TaggableManager`` was named ``tags``, you could find all the delicious fruit
+``ModelTagsManager`` was named ``tags``, you could find all the ``delicious`` fruit
 like so::
 
     >>> Food.objects.filter(tags__name__in=["delicious"])

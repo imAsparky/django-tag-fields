@@ -22,12 +22,12 @@ And then, to any model you want tagged, do the following.
 
     from django.db import models
 
-    from tag_fields.managers import TaggableManager
+    from tag_fields.managers import ModelTagsManager
 
     class Food(models.Model):
         # ... fields here
 
-        tags = TaggableManager()
+        tags = ModelTagsManager()
 
 
 .. tip::

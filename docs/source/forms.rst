@@ -3,7 +3,7 @@
 Tags in forms
 =============
 
-The ``TaggableManager`` will show up automatically as a field in a
+The ``ModelTagsManager`` will show up automatically as a field in a
 ``ModelForm`` or in the admin. Tags input via the form field are parsed
 as follows:
 

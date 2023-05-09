@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to django-tag-fields's documentation!
-=============================================
+Welcome to django-tag-fields documentation!
+===========================================
 
 This project is a hard clone of  `Jazzband django-taggit
 <https://github.com/jazzband/django-taggit>`_.

@@ -39,13 +39,13 @@ Your intermediary model must be a subclass of
 ``tag_fields.models.TaggedItemThroughBase`` with a foreign key to your content
 model named ``content_object``.
 
-Pass this intermediary model as the ``through`` argument to ``TaggableManager``:
+Pass this intermediary model as the ``through`` argument to ``ModelTagsManager``:
 
   .. code-block:: python
 
     from django.db import models
 
-    from tag_fields.managers import TaggableManager
+    from tag_fields.managers import ModelTagsManager
     from tag_fields.models import TaggedItemThroughBase
 
 
@@ -55,7 +55,7 @@ Pass this intermediary model as the ``through`` argument to ``TaggableManager``:
     class Food(models.Model):
         # ... fields here
 
-        tags = TaggableManager(through=TaggedFood)
+        tags = ModelTagsManager(through=TaggedFood)
 
 
 Once this is done, the API works the same as for GFK-tagged models.
@@ -74,7 +74,7 @@ For example, if your primary key is a string:
 
     from django.db import models
 
-    from tag_fields.managers import TaggableManager
+    from tag_fields.managers import ModelTagsManager
     from tag_fields.models import (
                                    GenericFKTaggedItemThroughBase,
                                    TaggedItemThroughBase,
@@ -87,7 +87,7 @@ For example, if your primary key is a string:
         food_id = models.CharField(primary_key=True)
         # ... fields here
 
-        tags = TaggableManager(through=GenericStringTaggedItem)
+        tags = ModelTagsManager(through=GenericStringTaggedItem)
 
 UUIDFKTaggedItemThroughBase
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,7 +101,7 @@ to use with models using a UUID primary key:
     from django.db import models
     from django.utils.translation import gettext_lazy as _
 
-    from tag_fields.managers import TaggableManager
+    from tag_fields.managers import ModelTagsManager
     from tag_fields.models import (
                                    UUIDFKTaggedItemThroughBase,
                                    TaggedItemThroughBase,
@@ -120,7 +120,7 @@ to use with models using a UUID primary key:
         id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
         # ... fields here
 
-        tags = TaggableManager(through=UUIDTaggedItem)
+        tags = ModelTagsManager(through=UUIDTaggedItem)
 
 Custom tag
 ~~~~~~~~~~
@@ -128,7 +128,7 @@ Custom tag
 When providing a custom ``Tag`` model, it should be a ``ForeignKey`` to your
 tag model named ``"tag"``. If your custom ``Tag`` model has extra parameters
 you want to initialize during setup, you can pass it along via the
-``tag_kwargs`` parameter of ``TaggableManager.add``.
+``tag_kwargs`` parameter of ``ModelTagsManager.add``.
 
 For example, ``my_food.tags.add("tag_name1", "tag_name2", tag_kwargs={"my_field":3})``:
 
@@ -137,7 +137,7 @@ For example, ``my_food.tags.add("tag_name1", "tag_name2", tag_kwargs={"my_field"
     from django.db import models
     from django.utils.translation import gettext_lazy as _
 
-    from tag_fields.managers import TaggableManager
+    from tag_fields.managers import ModelTagsManager
     from tag_fields.models import TagBase, GenericFKTaggedItemThroughBase
 
 
@@ -168,13 +168,13 @@ For example, ``my_food.tags.add("tag_name1", "tag_name2", tag_kwargs={"my_field"
     class Food(models.Model):
         # ... fields here
 
-        tags = TaggableManager(through=TaggedWhatever)
+        tags = ModelTagsManager(through=TaggedWhatever)
 
 
     class Drink(models.Model):
         # ... fields here
 
-        tags = TaggableManager(through=TaggedWhatever)
+        tags = ModelTagsManager(through=TaggedWhatever)
 
 
 .. class:: TagBase

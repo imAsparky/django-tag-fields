@@ -1,7 +1,7 @@
 Usage With Django Rest Framework
 ================================
 
-To add tags into a ``TaggableManager()`` using ``django-tag-fields``, the usual
+To add tags into a ``ModelTagsManager()`` using ``django-tag-fields``, the usual
 ``Serializer`` from Django REST Framework cannot be used.
 
 Attempting to save the tags into a list using ``DRF Serializer`` will cause
