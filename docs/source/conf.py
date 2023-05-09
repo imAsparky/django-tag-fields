@@ -10,7 +10,7 @@ project = "django-tag-fields"
 copyright = '2023, "Alex Gaynor, Mark Sevelj and individual contributors."'
 author = '"Alex Gaynor, Mark Sevelj and individual contributors."'
 
-__version__ = "4.0.2"
+__version__ = "4.1.0"
 # The full version, including alpha/beta/rc tags.
 release = __version__
 

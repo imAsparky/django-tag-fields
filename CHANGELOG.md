@@ -4,6 +4,19 @@
 
 <!--next-version-placeholder-->
 
+## v4.1.0 (2023-05-09)
+### Feature
+* **tags:** Rename models ready for adding fields #66 ([`a21fec8`](https://github.com/imAsparky/django-tag-fields/commit/a21fec833f4745682228260e8f77886c0b8ddfd3))
+
+### Fix
+* **ver:** Update conf.py location in sem_ver #68 ([`14ff854`](https://github.com/imAsparky/django-tag-fields/commit/14ff8549930c0c46a5ed097f92d61a36f5f281ed))
+
+### Documentation
+* **models:** Update model names #66 ([`de364b4`](https://github.com/imAsparky/django-tag-fields/commit/de364b48ecf9afe09279b2c9d74f9f3fd7004c09))
+* **structure:** Update to standard Sphinx #63 ([`f03086a`](https://github.com/imAsparky/django-tag-fields/commit/f03086acd78a8ad5d0af36dfb122e09444865ab0))
+* **config:** Add readthedocs and extra deps #63 ([`94e4374`](https://github.com/imAsparky/django-tag-fields/commit/94e437496323dd5545d9ccd1f6b768fd653e9db5))
+* **deps:** Update docutils #61 ([`c5a4ed3`](https://github.com/imAsparky/django-tag-fields/commit/c5a4ed3802cd421d2dab2d22a4fe814fb6305acd))
+
 ## v4.0.2 (2023-05-06)
 ### Fix
 * **settings:** Update Constant names #59 ([`c2a9b3a`](https://github.com/imAsparky/django-tag-fields/commit/c2a9b3ab5047023464ff4a032f2eafce68c7d06b))
