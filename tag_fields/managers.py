@@ -22,7 +22,7 @@ from tag_fields.forms import TagField
 from tag_fields.models import (
     GenericFKTaggedItemThroughBase,
     UUIDFKTaggedItemThroughBase,
-    TaggedItem,
+    ModelTagIntFk,
 )
 from tag_fields.utils import require_instance_manager
 
@@ -89,7 +89,7 @@ class _TaggableManager(models.Manager):
     :param through: The name of the django through table
     :type through: str
 
-    :param model: The namen of the model for the Taggable manager
+    :param model: The name of the model for the Taggable manager
     :type model: str
 
     :param instance: Instance for the Taggable manager
@@ -100,6 +100,10 @@ class _TaggableManager(models.Manager):
 
     :param ordering: todo
     :type ordering: todo
+
+    :param field_name: Default ``tags``.  Provide a custom field name for the
+        model tag field name.
+    :type field_name: str, optional
 
     .. todo::
         Very old todo here.
@@ -114,6 +118,7 @@ class _TaggableManager(models.Manager):
         model,
         instance,
         prefetch_cache_name,
+        field_name=None,
         ordering=None,
     ):
         super().__init__()
@@ -524,7 +529,7 @@ class _TaggableManager(models.Manager):
         return results
 
 
-class TaggableManager(RelatedField):
+class ModelTagsManager(RelatedField):
     """
     Manager for handling the actions required on Tags.
 
@@ -576,9 +581,10 @@ class TaggableManager(RelatedField):
         related_name=None,
         to=None,
         ordering=None,
+        field_name=None,
         manager=_TaggableManager,
     ):
-        self.through = through or TaggedItem
+        self.through = through or ModelTagIntFk
 
         rel = ManyToManyRel(
             self, to, related_name=related_name, through=self.through
@@ -596,6 +602,11 @@ class TaggableManager(RelatedField):
         self.ordering = ordering
         self.swappable = False
         self.manager = manager
+
+        if field_name:
+            self.field_name = field_name
+        else:
+            self.field_name = "tags"
 
     def __get__(self, instance, model):
         """
@@ -685,6 +696,13 @@ class TaggableManager(RelatedField):
         return "ManyToManyField"
 
     def post_through_setup(self, cls):
+        """
+        Checks the tag through table, and if duplicates raises an error.
+
+        :raises ValueError: "You can't have two TaggableManagers with the
+            same through model."
+        """
+        print(f"\nMANAGER FIELD NAME {self.field_name}")
         self.use_gfk = self.through is None or issubclass(
             self.through, GenericFKTaggedItemThroughBase
         )
@@ -695,11 +713,13 @@ class TaggableManager(RelatedField):
             ).remote_field.model
 
         if self.use_gfk:
+            print(f"\nMANAGER USING GFK {self.through}")
             tagged_items = GenericRelation(self.through)
             tagged_items.contribute_to_class(cls, "tagged_items")
 
         for rel in cls._meta.local_many_to_many:
-            if rel == self or not isinstance(rel, TaggableManager):
+            print(f"\nMANAGER REL {rel}")
+            if rel == self or not isinstance(rel, ModelTagsManager):
                 continue
             if rel.through == self.through:
                 raise ValueError(
