@@ -26,7 +26,9 @@ class TestTaggit_serializer(TestCase):
         incorrect_value = "123"
 
         with self.assertRaises(ValidationError):
-            incorrect_value = serializer_field.to_internal_value(incorrect_value)
+            incorrect_value = serializer_field.to_internal_value(
+                incorrect_value
+            )
 
         representation = serializer_field.to_representation(correct_value)
         self.assertIsInstance(representation, serializers.TagList)

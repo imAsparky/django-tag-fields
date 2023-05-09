@@ -104,6 +104,20 @@ class ModelTag(TagBase):
         app_label = "tag_fields"
 
 
+class FieldTag(TagBase):
+    """Model tag for use with your own model.
+
+    This is a model level tag, i.e. there can only be one per model.
+
+    taggit class name didnt exist, this is new
+    """
+
+    class Meta:
+        verbose_name = _("Field Tag")
+        verbose_name_plural = _("Field Tags")
+        app_label = "tag_fields"
+
+
 # Through table base models ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class ThroughTableBase(models.Model):
     """Base class for a models ``tags`` through table.
@@ -149,7 +163,7 @@ class ThroughTableBase(models.Model):
         return cls.tag_model().objects.filter(**kwargs).distinct()
 
 
-class TaggedItemThroughBase(ThroughTableBase):
+class ModelTagThroughBase(ThroughTableBase):
     """Sub class of ``ThroughTableBase``
 
     Base class: ``through table`` for a ``Tagged Item`` model.
@@ -162,6 +176,24 @@ class TaggedItemThroughBase(ThroughTableBase):
 
     tag = models.ForeignKey(
         ModelTag,
+        related_name="%(app_label)s_%(class)s_items",
+        on_delete=models.CASCADE,
+    )
+
+
+class FieldTagThroughBase(ThroughTableBase):
+    """Sub class of ``ThroughTableBase``
+
+    Base class: ``through table`` for a ``Tagged Item`` model.
+
+    taggit class name didnt exist, this is new.
+    """
+
+    class Meta:
+        abstract = True
+
+    field_name = models.ForeignKey(
+        FieldTag,
         related_name="%(app_label)s_%(class)s_items",
         on_delete=models.CASCADE,
     )
@@ -242,8 +274,8 @@ class UUIDFKTaggedItemThroughBase(GenericFKTaggedItemThroughBase):
 
 
 # Through tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class ModelTagIntFk(IntegerFKTaggedItemThroughBase, TaggedItemThroughBase):
-    """Tagged Item Through Table using Integer Foreign Key.
+class ModelTagIntFk(IntegerFKTaggedItemThroughBase, ModelTagThroughBase):
+    """Tagged Model Through Table using Integer Foreign Key.
 
     Allows custom Tag models. Tagged models use a ``Integer`` primary key.
 
@@ -256,3 +288,19 @@ class ModelTagIntFk(IntegerFKTaggedItemThroughBase, TaggedItemThroughBase):
         app_label = "tag_fields"
         index_together = [["content_type", "object_id"]]
         unique_together = [["content_type", "object_id", "tag"]]
+
+
+class FieldTagIntFk(IntegerFKTaggedItemThroughBase, FieldTagThroughBase):
+    """Tagged Field Through Table using Integer Foreign Key.
+
+    Allows custom Tag models. Tagged models use a ``Integer`` primary key.
+
+    taggit class name was TaggedItem
+    """
+
+    class Meta:
+        verbose_name = _("Field Tag IntFk")
+        verbose_name_plural = _("Field Tags IntFk")
+        app_label = "tag_fields"
+        index_together = [["content_type", "object_id"]]
+        unique_together = [["content_type", "object_id", "field_name"]]

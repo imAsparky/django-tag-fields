@@ -23,8 +23,19 @@ from tag_fields.models import (
     GenericFKTaggedItemThroughBase,
     UUIDFKTaggedItemThroughBase,
     ModelTagIntFk,
+    FieldTagIntFk,
 )
 from tag_fields.utils import require_instance_manager
+
+
+def _get_subclasses(model):
+    subclasses = [model]
+    for field in model._meta.get_fields():
+        if isinstance(field, OneToOneRel) and getattr(
+            field.field.remote_field, "parent_link", None
+        ):
+            subclasses.extend(_get_subclasses(field.related_model))
+    return subclasses
 
 
 class ExtraJoinRestriction:
@@ -531,7 +542,7 @@ class _TaggableManager(models.Manager):
 
 class ModelTagsManager(RelatedField):
     """
-    Manager for handling the actions required on Tags.
+    Manager for handling the actions required on Model Tags.
 
     Paramaters
     ==========
@@ -574,8 +585,8 @@ class ModelTagsManager(RelatedField):
 
     def __init__(
         self,
-        verbose_name=_("Tags"),
-        help_text=_("A comma-separated list of tags."),
+        verbose_name=_("Model Tags"),
+        help_text=_("A comma-separated list of a models tags."),
         through=None,
         blank=False,
         related_name=None,
@@ -602,11 +613,6 @@ class ModelTagsManager(RelatedField):
         self.ordering = ordering
         self.swappable = False
         self.manager = manager
-
-        if field_name:
-            self.field_name = field_name
-        else:
-            self.field_name = "tags"
 
     def __get__(self, instance, model):
         """
@@ -702,7 +708,7 @@ class ModelTagsManager(RelatedField):
         :raises ValueError: "You can't have two TaggableManagers with the
             same through model."
         """
-        print(f"\nMANAGER FIELD NAME {self.field_name}")
+        # print(f"\nMANAGER FIELD NAME {self.field_name}")
         self.use_gfk = self.through is None or issubclass(
             self.through, GenericFKTaggedItemThroughBase
         )
@@ -713,17 +719,17 @@ class ModelTagsManager(RelatedField):
             ).remote_field.model
 
         if self.use_gfk:
-            print(f"\nMANAGER USING GFK {self.through}")
+            # print(f"\nMANAGER USING GFK {self.through}")
             tagged_items = GenericRelation(self.through)
             tagged_items.contribute_to_class(cls, "tagged_items")
 
         for rel in cls._meta.local_many_to_many:
-            print(f"\nMANAGER REL {rel}")
+            # print(f"\nMANAGER REL {rel}")
             if rel == self or not isinstance(rel, ModelTagsManager):
                 continue
             if rel.through == self.through:
                 raise ValueError(
-                    "You can't have two TaggableManagers with the"
+                    "You can't have two ModelTagsManager with the"
                     " same through model."
                 )
 
@@ -943,11 +949,417 @@ class ModelTagsManager(RelatedField):
         return [self.related_fields[0][1]]
 
 
-def _get_subclasses(model):
-    subclasses = [model]
-    for field in model._meta.get_fields():
-        if isinstance(field, OneToOneRel) and getattr(
-            field.field.remote_field, "parent_link", None
-        ):
-            subclasses.extend(_get_subclasses(field.related_model))
-    return subclasses
+class FieldTagsManager(RelatedField):
+    """
+    Manager for handling the actions required on Field Tags.
+
+    Paramaters
+    ==========
+
+    :param blank: Default: False Determines if the field is required
+    :type blank: bool, optional
+
+    :param help_text: Default: _("A comma-separated list of tags.") The help
+        text that should be used in forms, including the admin.
+    :type help_text: str, optional
+
+    :param manager: Default: :class:`managers._TaggableManager` The Taggable
+        manager to use for this instance.
+    :type manager:
+
+    :param ordering: Default: None
+    :type ordering: todo, optional
+
+    :param related_name:
+    :type related_name: str, optional
+
+     :param through: Default: None The through table model, see
+        :doc:`custom_tagging` for more information.
+    :type through: str, optional
+
+    :param to: Default: None
+    :type to: todo, optional
+
+    :param verbose_name: Default: _("Tags") This field's verbose name.
+    :type verbose_name: str, optional
+    """
+
+    # Field flags
+    many_to_many = True
+    many_to_one = False
+    one_to_many = False
+    one_to_one = False
+
+    _related_name_counter = 0
+
+    def __init__(
+        self,
+        verbose_name=_("Field Tags"),
+        help_text=_(
+            "A comma-separated list of field tags for a single model."
+        ),
+        through=None,
+        blank=False,
+        related_name=None,
+        to=None,
+        ordering=None,
+        field_name=None,
+        manager=_TaggableManager,
+    ):
+        self.through = through or FieldTagIntFk
+
+        rel = ManyToManyRel(
+            self, to, related_name=related_name, through=self.through
+        )
+
+        super().__init__(
+            verbose_name=verbose_name,
+            help_text=help_text,
+            blank=blank,
+            null=True,
+            serialize=False,
+            rel=rel,
+        )
+
+        self.ordering = ordering
+        self.swappable = False
+        self.manager = manager
+
+        if field_name:
+            self.field_name = field_name
+        else:
+            self.field_name = "field_name"
+
+    def __get__(self, instance, model):
+        """
+        Check the instance has a primary key.
+
+        :raises ValueError: "%s objects need to have a primary key value "
+                "before you can access their tags." % model.__name__
+
+        :return: An instance of the default manager.
+        :rtype: :class:`managers._TaggableManager`
+        """
+
+        if instance is not None and instance.pk is None:
+            raise ValueError(
+                "%s objects need to have a primary key value "
+                "before you can access their tags." % model.__name__
+            )
+        return self.manager(
+            through=self.through,
+            model=model,
+            instance=instance,
+            prefetch_cache_name=self.name,
+            ordering=self.ordering,
+        )
+
+    def deconstruct(self):
+        """
+        Deconstruct the object, used with migrations.
+        """
+        name, path, args, kwargs = super().deconstruct()
+        # Remove forced kwargs.
+        for kwarg in ("serialize", "null"):
+            del kwargs[kwarg]
+        # Add arguments related to relations.
+        # Ref: https://github.com/jazzband/django-taggit/issues/206#issuecomment-37578676 # noqa: E501
+        rel = self.remote_field
+        if isinstance(rel.through, str):
+            kwargs["through"] = rel.through
+        elif not rel.through._meta.auto_created:
+            kwargs["through"] = "{}.{}".format(
+                rel.through._meta.app_label, rel.through._meta.object_name
+            )
+
+        related_model = rel.model
+        if isinstance(related_model, str):
+            kwargs["to"] = related_model
+        else:
+            kwargs["to"] = "{}.{}".format(
+                related_model._meta.app_label, related_model._meta.object_name
+            )
+
+        return name, path, args, kwargs
+
+    def contribute_to_class(self, cls, name):
+        self.set_attributes_from_name(name)
+        self.model = cls
+        self.opts = cls._meta
+
+        cls._meta.add_field(self)
+        setattr(cls, name, self)
+        if not cls._meta.abstract:
+            if isinstance(self.remote_field.model, str):
+
+                def resolve_related_class(cls, model, field):
+                    field.remote_field.model = model
+
+                lazy_related_operation(
+                    resolve_related_class,
+                    cls,
+                    self.remote_field.model,
+                    field=self,
+                )
+            if isinstance(self.through, str):
+
+                def resolve_related_class(cls, model, field):
+                    self.through = model
+                    self.remote_field.through = model
+                    self.post_through_setup(cls)
+
+                lazy_related_operation(
+                    resolve_related_class, cls, self.through, field=self
+                )
+            else:
+                self.post_through_setup(cls)
+
+    def get_internal_type(self):
+        return "ManyToManyField"
+
+    def post_through_setup(self, cls):
+        """
+        Checks the tag through table, and if duplicates raises an error.
+
+        :raises ValueError: "You can't have two TaggableManagers with the
+            same through model."
+        """
+        # print(f"\nMANAGER FIELD NAME {self.field_name}")
+        self.use_gfk = self.through is None or issubclass(
+            self.through, GenericFKTaggedItemThroughBase
+        )
+
+        if not self.remote_field.model:
+            self.remote_field.model = self.through._meta.get_field(
+                self.field_name
+            ).remote_field.model
+
+        if self.use_gfk:
+            # print(f"\nMANAGER USING GFK {self.through}")
+            tagged_items = GenericRelation(self.through)
+            tagged_items.contribute_to_class(cls, "tagged_items")
+
+        for rel in cls._meta.local_many_to_many:
+            # print(f"\nMANAGER REL {rel}")
+            if rel == self or not isinstance(rel, FieldTagsManager):
+                continue
+            if rel.through == self.through:
+                raise ValueError(
+                    "You can't have two FieldTagsManager with the"
+                    " same through model."
+                )
+
+    def save_form_data(self, instance, value):
+        getattr(instance, self.name).set(value)
+
+    def formfield(self, form_class=TagField, **kwargs):
+        defaults = {
+            "label": capfirst(self.verbose_name),
+            "help_text": self.help_text,
+            "required": not self.blank,
+        }
+        defaults.update(kwargs)
+        return form_class(**defaults)
+
+    def value_from_object(self, obj):
+        if obj.pk is None:
+            return []
+        qs = self.through.objects.select_related("tag").filter(
+            **self.through.lookup_kwargs(obj)
+        )
+        return [ti.tag for ti in qs]
+
+    def m2m_reverse_name(self):
+        return self.through._meta.get_field("tag").column
+
+    def m2m_reverse_field_name(self):
+        return self.through._meta.get_field("tag").name
+
+    def m2m_target_field_name(self):
+        return self.model._meta.pk.name
+
+    def m2m_reverse_target_field_name(self):
+        return self.remote_field.model._meta.pk.name
+
+    def m2m_column_name(self):
+        if self.use_gfk:
+            return self.through._meta.private_fields[0].fk_field
+        return self.through._meta.get_field("content_object").column
+
+    def m2m_db_table(self):
+        return self.through._meta.db_table
+
+    def bulk_related_objects(self, new_objs, using):
+        return []
+
+    def _get_mm_case_path_info(self, direct=False, filtered_relation=None):
+        pathinfos = []
+        linkfield1 = self.through._meta.get_field("content_object")
+        linkfield2 = self.through._meta.get_field(
+            self.m2m_reverse_field_name()
+        )
+        if django.VERSION >= (4, 1) and not filtered_relation:
+            # Django >= 4.1 provides cached path_infos and reverse_path_infos
+            # properties to use in preference to get_path_info /
+            # get_reverse_path_info when not passing a filtered_relation
+            if direct:
+                join1infos = linkfield1.reverse_path_infos
+                join2infos = linkfield2.path_infos
+            else:
+                join1infos = linkfield2.reverse_path_infos
+                join2infos = linkfield1.path_infos
+        else:
+            if direct:
+                join1infos = linkfield1.get_reverse_path_info(
+                    filtered_relation=filtered_relation
+                )
+                join2infos = linkfield2.get_path_info(
+                    filtered_relation=filtered_relation
+                )
+            else:
+                join1infos = linkfield2.get_reverse_path_info(
+                    filtered_relation=filtered_relation
+                )
+                join2infos = linkfield1.get_path_info(
+                    filtered_relation=filtered_relation
+                )
+        pathinfos.extend(join1infos)
+        pathinfos.extend(join2infos)
+        return pathinfos
+
+    def _get_gfk_case_path_info(self, direct=False, filtered_relation=None):
+        pathinfos = []
+        from_field = self.model._meta.pk
+        opts = self.through._meta
+        linkfield = self.through._meta.get_field(self.m2m_reverse_field_name())
+        if direct:
+            join1infos = [
+                PathInfo(
+                    self.model._meta,
+                    opts,
+                    [from_field],
+                    self.remote_field,
+                    True,
+                    False,
+                    filtered_relation,
+                )
+            ]
+            if django.VERSION >= (4, 1) and not filtered_relation:
+                join2infos = linkfield.path_infos
+            else:
+                join2infos = linkfield.get_path_info(
+                    filtered_relation=filtered_relation
+                )
+        else:
+            if django.VERSION >= (4, 1) and not filtered_relation:
+                join1infos = linkfield.reverse_path_infos
+            else:
+                join1infos = linkfield.get_reverse_path_info(
+                    filtered_relation=filtered_relation
+                )
+            join2infos = [
+                PathInfo(
+                    opts,
+                    self.model._meta,
+                    [from_field],
+                    self,
+                    True,
+                    False,
+                    filtered_relation,
+                )
+            ]
+        pathinfos.extend(join1infos)
+        pathinfos.extend(join2infos)
+        return pathinfos
+
+    def get_path_info(self, filtered_relation=None):
+        if self.use_gfk:
+            return self._get_gfk_case_path_info(
+                direct=True, filtered_relation=filtered_relation
+            )
+        else:
+            return self._get_mm_case_path_info(
+                direct=True, filtered_relation=filtered_relation
+            )
+
+    @cached_property
+    def path_infos(self):
+        return self.get_path_info()
+
+    def get_reverse_path_info(self, filtered_relation=None):
+        if self.use_gfk:
+            return self._get_gfk_case_path_info(
+                direct=False, filtered_relation=filtered_relation
+            )
+        else:
+            return self._get_mm_case_path_info(
+                direct=False, filtered_relation=filtered_relation
+            )
+
+    @cached_property
+    def reverse_path_infos(self):
+        return self.get_reverse_path_info()
+
+    def get_joining_columns(self, reverse_join=False):
+        # RemovedInDjango60Warning
+        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d # noqa: E501
+        # Use "get_joining_fields() instead."
+        if reverse_join:
+            return ((self.model._meta.pk.column, "object_id"),)
+        else:
+            return (("object_id", self.model._meta.pk.column),)
+
+    def get_joining_fields(self, reverse_join=False):
+        if reverse_join:
+            return (
+                (
+                    self.model._meta.pk,
+                    self.remote_field.through._meta.get_field("object_id"),
+                ),
+            )
+        else:
+            return (
+                (
+                    self.remote_field.through._meta.get_field("object_id"),
+                    self.model._meta.pk,
+                ),
+            )
+
+    def _get_extra_restriction(self, alias, related_alias):
+        extra_col = self.through._meta.get_field("content_type").column
+        content_type_ids = [
+            ContentType.objects.get_for_model(subclass).pk
+            for subclass in _get_subclasses(self.model)
+        ]
+        return ExtraJoinRestriction(related_alias, extra_col, content_type_ids)
+
+    def _get_extra_restriction_legacy(self, where_class, alias, related_alias):
+        # this is a shim to maintain compatibility with django < 4.0
+        return self._get_extra_restriction(alias, related_alias)
+
+    # this is required to handle a change in Django 4.0
+    # https://docs.djangoproject.com/en/4.0/releases/4.0/#miscellaneous
+    # the signature of the (private) function was changed
+    if django.VERSION < (4, 0):
+        get_extra_restriction = _get_extra_restriction_legacy
+    else:
+        get_extra_restriction = _get_extra_restriction
+
+    def get_reverse_joining_columns(self):
+        # RemovedInDjango60Warning
+        # https://github.com/django/django/commit/8b1ff0da4b162e87edebd94e61f2cd153e9e159d # noqa: E501
+        # Use "get_reverse_joining_fields() instead."
+        return self.get_joining_columns(reverse_join=True)
+
+    def get_reverse_joining_fields(self):
+        return self.get_joining_fields(reverse_join=True)
+
+    @property
+    def related_fields(self):
+        return [
+            (self.through._meta.get_field("object_id"), self.model._meta.pk)
+        ]
+
+    @property
+    def foreign_related_fields(self):
+        return [self.related_fields[0][1]]

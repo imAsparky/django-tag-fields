@@ -2,7 +2,10 @@ import uuid
 
 from django.db import models
 
-from tag_fields.managers import ModelTagsManager
+from tag_fields.managers import (
+    FieldTagsManager,
+    ModelTagsManager,
+)
 from tag_fields.models import (
     GenericFKTaggedItemThroughBase,
     IntegerFKTaggedItemThroughBase,
@@ -11,23 +14,24 @@ from tag_fields.models import (
     ModelTag,
     TagBase,
     ModelTagIntFk,
-    TaggedItemThroughBase,
+    ModelTagThroughBase,
 )
 
 
 # base test model
 class TestModel(models.Model):
     tags = ModelTagsManager()
+    # fields = FieldTagsManager()
 
 
 # Ensure that two TaggableManagers with custom through model are allowed.
-class Through1(TaggedItemThroughBase):
+class Through1(ModelTagThroughBase):
     content_object = models.ForeignKey(
         "MultipleTags", on_delete=models.CASCADE
     )
 
 
-class Through2(TaggedItemThroughBase):
+class Through2(ModelTagThroughBase):
     content_object = models.ForeignKey(
         "MultipleTags", on_delete=models.CASCADE
     )
@@ -76,7 +80,7 @@ class BaseFood(models.Model):
         return self.name
 
 
-class MultiInheritanceLazyResolutionFoodTag(TaggedItemThroughBase):
+class MultiInheritanceLazyResolutionFoodTag(ModelTagThroughBase):
     content_object = models.ForeignKey(
         "MultiInheritanceFood",
         related_name="tagged_items",
@@ -110,14 +114,14 @@ class HousePet(Pet):
 # Test direct-tagging with custom through model
 
 
-class TaggedFood(TaggedItemThroughBase):
+class TaggedFood(ModelTagThroughBase):
     content_object = models.ForeignKey("DirectFood", on_delete=models.CASCADE)
 
     class Meta:
         unique_together = [["content_object", "tag"]]
 
 
-class TaggedPet(TaggedItemThroughBase):
+class TaggedPet(ModelTagThroughBase):
     content_object = models.ForeignKey("DirectPet", on_delete=models.CASCADE)
 
 
@@ -202,7 +206,7 @@ class DirectTrackedHousePet(DirectTrackedPet):
 # Test custom through model to model with custom PK
 
 
-class TaggedCustomPKFood(TaggedItemThroughBase):
+class TaggedCustomPKFood(ModelTagThroughBase):
     content_object = models.ForeignKey(
         "DirectCustomPKFood", on_delete=models.CASCADE
     )
@@ -211,7 +215,7 @@ class TaggedCustomPKFood(TaggedItemThroughBase):
         unique_together = [["content_object", "tag"]]
 
 
-class TaggedCustomPKPet(TaggedItemThroughBase):
+class TaggedCustomPKPet(ModelTagThroughBase):
     content_object = models.ForeignKey(
         "DirectCustomPKPet", on_delete=models.CASCADE
     )
@@ -242,7 +246,7 @@ class DirectCustomPKHousePet(DirectCustomPKPet):
 
 
 # Test custom through model to model with custom PK using GenericForeignKey
-class TaggedCustomPK(GenericFKTaggedItemThroughBase, TaggedItemThroughBase):
+class TaggedCustomPK(GenericFKTaggedItemThroughBase, ModelTagThroughBase):
     object_id = models.CharField(
         max_length=50, verbose_name="Object id", db_index=True
     )
