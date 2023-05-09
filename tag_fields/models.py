@@ -15,6 +15,7 @@ except ImportError:
         return tag
 
 
+# Tags base models ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TagBase(models.Model):
     """Abstract Base class for the tags."""
 
@@ -88,27 +89,29 @@ class TagBase(models.Model):
         return slug
 
 
-class Tag(TagBase):
+# Tag models ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ModelTag(TagBase):
     """Model tag for use with your own model.
 
     This is a model level tag, i.e. there can only be one per model.
 
+    taggit class name was Tag
     """
 
     class Meta:
-        verbose_name = _("tag")
-        verbose_name_plural = _("tags")
+        verbose_name = _("Model Tag")
+        verbose_name_plural = _("Model Tags")
         app_label = "tag_fields"
 
 
+# Through table base models ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class ThroughTableBase(models.Model):
-    """Base class for a model ``tags`` through table.
+    """Base class for a models ``tags`` through table.
 
     Abstract Base Class: ``through table`` for all ``through table``
     sub classes.
 
     taggit class name was ItemBase
-
     """
 
     class Meta:
@@ -152,14 +155,13 @@ class TaggedItemThroughBase(ThroughTableBase):
     Base class: ``through table`` for a ``Tagged Item`` model.
 
     taggit class name was TaggedItemBase
-
     """
 
     class Meta:
         abstract = True
 
     tag = models.ForeignKey(
-        Tag,
+        ModelTag,
         related_name="%(app_label)s_%(class)s_items",
         on_delete=models.CASCADE,
     )
@@ -172,8 +174,6 @@ class GenericFKTaggedItemThroughBase(ThroughTableBase):
     ``GenericForeignKey``.
 
     taggit class name was CommonGenericTaggedItemBase
-
-
     """
 
     class Meta:
@@ -217,7 +217,6 @@ class IntegerFKTaggedItemThroughBase(GenericFKTaggedItemThroughBase):
     ``integer`` primary key.
 
     taggit class name was GenericTaggedItemBase
-
     """
 
     class Meta:
@@ -234,7 +233,6 @@ class UUIDFKTaggedItemThroughBase(GenericFKTaggedItemThroughBase):
     primary key.
 
     taggit class name was GenericUUIDTaggedItemBase
-
     """
 
     class Meta:
@@ -243,23 +241,18 @@ class UUIDFKTaggedItemThroughBase(GenericFKTaggedItemThroughBase):
     object_id = models.UUIDField(verbose_name=_("object ID"), db_index=True)
 
 
-class TaggedItem(IntegerFKTaggedItemThroughBase, TaggedItemThroughBase):
+# Through tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class ModelTagIntFk(IntegerFKTaggedItemThroughBase, TaggedItemThroughBase):
     """Tagged Item Through Table using Integer Foreign Key.
 
     Allows custom Tag models. Tagged models use a ``Integer`` primary key.
 
     taggit class name was TaggedItem
-
-    .. note::
-
-        Changing this class name breaks the tests. Some checks made to see what
-        was causing the error but it requires more time.
-
     """
 
     class Meta:
-        verbose_name = _("tagged item")
-        verbose_name_plural = _("tagged items")
+        verbose_name = _("Model Tag IntFk")
+        verbose_name_plural = _("Model Tags IntFk")
         app_label = "tag_fields"
         index_together = [["content_type", "object_id"]]
         unique_together = [["content_type", "object_id", "tag"]]

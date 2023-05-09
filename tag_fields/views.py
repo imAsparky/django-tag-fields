@@ -2,7 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 from django.views.generic.list import ListView
 
-from tag_fields.models import Tag, TaggedItem
+from tag_fields.models import ModelTag, ModelTagIntFk
 
 
 def tagged_object_list(request, slug, queryset, **kwargs):
@@ -22,13 +22,13 @@ class TagListMixin:
 
     def dispatch(self, request, *args, **kwargs):
         slug = kwargs.pop("slug")
-        self.tag = get_object_or_404(Tag, slug=slug)
+        self.tag = get_object_or_404(ModelTag, slug=slug)
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self, **kwargs):
         qs = super().get_queryset(**kwargs)
         return qs.filter(
-            pk__in=TaggedItem.objects.filter(
+            pk__in=ModelTagIntFk.objects.filter(
                 tag=self.tag,
                 content_type=ContentType.objects.get_for_model(qs.model),
             ).values_list("object_id", flat=True)

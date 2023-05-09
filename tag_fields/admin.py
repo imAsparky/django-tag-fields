@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from tag_fields.models import Tag, TaggedItem
+from tag_fields.models import ModelTag, ModelTagIntFk
 
 
 class TaggedItemInline(admin.StackedInline):
-    model = TaggedItem
+    model = ModelTagIntFk
 
 
-@admin.register(Tag)
+@admin.register(ModelTag)
 class TagAdmin(admin.ModelAdmin):
     inlines = [TaggedItemInline]
     list_display = ["name", "slug"]
